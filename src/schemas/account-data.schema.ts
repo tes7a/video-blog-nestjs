@@ -14,7 +14,7 @@ export class AccountData {
   @Prop({ default: '' })
   recoveryCode: string;
 
-  @Prop()
+  @Prop({ required: true, type: String })
   email: string;
 
   @Prop()

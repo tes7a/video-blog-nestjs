@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 export interface User {
   id: string;
   token: string;
@@ -16,6 +14,17 @@ export interface User {
     expirationDate: string;
     isConfirmed: string;
   };
+}
+
+export interface GetUsersOutput {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: Array<
+    Pick<User, 'id'> &
+      Pick<User['accountData'], 'email' | 'login' | 'createdAt'>
+  >;
 }
 
 export interface CreateUserOutput {

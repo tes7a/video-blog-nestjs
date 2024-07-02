@@ -6,15 +6,28 @@ import {
   Post,
   Res,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CreateUserDTO } from 'src/dto';
 
+import { CreateUserDTO, GetUsersDTO } from 'src/dto';
+import { UsersQueryRepository } from 'src/repository';
 import { UsersService } from 'src/services';
 
 @Controller('/users')
 export class UsersController {
-  constructor(private users: UsersService) {}
+  constructor(
+    private users: UsersService,
+    private usersQuery: UsersQueryRepository,
+  ) {}
+
+  @Get()
+  async getUsers(@Query() query: GetUsersDTO, @Res() response: Response) {
+    const data = await this.usersQuery.getUsers(query);
+    if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
+    return response.status(HttpStatus.OK).send(data);
+  }
 
   @Post()
   async createUser(
@@ -31,7 +44,7 @@ export class UsersController {
   @Delete('/:id')
   async deleteUser(@Param('id') id: string, @Res() response: Response) {
     const data = await this.users.deleteUser(id);
-    if (!data) return response.send(HttpStatus.NOT_FOUND);
-    return response.send(HttpStatus.NO_CONTENT);
+    if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
+    return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 }

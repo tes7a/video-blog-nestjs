@@ -3,14 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 
 import { UserDBModel } from 'src/models';
-import { User as UserSchema } from 'src/schemas';
+import { User } from 'src/schemas';
 import { CreateUserOutput } from 'src/types';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(UserSchema.name) private userModel: Model<UserSchema>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async createUser(userData: UserDBModel): Promise<CreateUserOutput | string> {
     const {
