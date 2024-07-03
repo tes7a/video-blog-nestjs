@@ -1,10 +1,5 @@
+import { Blog } from 'src/schemas';
+
 export class BlogDBModel {
-  constructor(
-    public id: string,
-    public name: string,
-    public description: string,
-    public websiteUrl: string,
-    public createdAt: string,
-    public isMembership: boolean,
-  ) {}
+  constructor(public params: Blog) {}
 }

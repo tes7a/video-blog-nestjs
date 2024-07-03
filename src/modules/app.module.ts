@@ -4,17 +4,27 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import {
   BlogsController,
+  PostsController,
   ResetController,
   UsersController,
 } from 'src/controllers';
 import {
   BlogsRepository,
   UsersRepository,
+  PostsRepository,
   BlogsQueryRepository,
   UsersQueryRepository,
+  PostsQueryRepository,
 } from 'src/repository';
-import { Blog, BlogSchema, User, UserSchema } from 'src/schemas';
-import { BlogService, UsersService } from 'src/services';
+import {
+  Blog,
+  BlogSchema,
+  Post,
+  PostSchema,
+  User,
+  UserSchema,
+} from 'src/schemas';
+import { BlogService, PostsService, UsersService } from 'src/services';
 
 @Module({
   imports: [
@@ -23,16 +33,25 @@ import { BlogService, UsersService } from 'src/services';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Blog.name, schema: BlogSchema },
+      { name: Post.name, schema: PostSchema },
     ]),
   ],
-  controllers: [UsersController, ResetController, BlogsController],
+  controllers: [
+    UsersController,
+    ResetController,
+    BlogsController,
+    PostsController,
+  ],
   providers: [
     UsersService,
-    UsersRepository,
     BlogService,
+    PostsService,
+    UsersRepository,
     BlogsRepository,
+    PostsRepository,
     UsersQueryRepository,
     BlogsQueryRepository,
+    PostsQueryRepository,
   ],
 })
 export class AppModule {}

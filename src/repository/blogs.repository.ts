@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
-import { pick } from 'lodash';
+import { omit } from 'lodash';
 
-import { BlogDBModel } from 'src/models';
 import { Blog } from 'src/schemas';
-import { CreateBlogOutput } from 'src/types';
+import { CreateBlogOutput, Blog as BlogType } from 'src/types';
 import { UpdateBlogDTO } from 'src/dto';
 
 @Injectable()
@@ -13,24 +12,16 @@ export class BlogsRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
 
   async getBlogById(id: string): Promise<CreateBlogOutput | undefined> {
-    const data = await this.blogModel.findOne({ id });
+    const data = await this.blogModel.findOne({ id }).lean();
 
     if (!data) return undefined;
 
     return {
-      ...pick(
-        data,
-        'id',
-        'name',
-        'description',
-        'websiteUrl',
-        'createdAt',
-        'isMembership',
-      ),
+      ...omit(data, '_id', '__v'),
     };
   }
 
-  async createBlog(blogData: BlogDBModel): Promise<CreateBlogOutput | string> {
+  async createBlog(blogData: BlogType): Promise<CreateBlogOutput | string> {
     try {
       await this.blogModel.create(blogData);
       return blogData;

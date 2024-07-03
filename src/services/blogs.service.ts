@@ -16,16 +16,16 @@ export class BlogService {
 
   async createBlog(payload: CreateBlogDTO): Promise<CreateBlogOutput | string> {
     const { description, name, websiteUrl } = payload;
-    const blogData = new BlogDBModel(
-      v4(),
+    const { params } = new BlogDBModel({
+      id: v4(),
       name,
       description,
       websiteUrl,
-      new Date().toISOString(),
-      true,
-    );
+      createdAt: new Date().toISOString(),
+      isMembership: true,
+    });
 
-    return await this.blogRepository.createBlog(blogData);
+    return await this.blogRepository.createBlog(params);
   }
 
   async updateBlog(payload: {
@@ -36,6 +36,6 @@ export class BlogService {
   }
 
   async deleteBlog(id: string): Promise<boolean> {
-    return await this.blogRepository.deleteBlog(id)
+    return await this.blogRepository.deleteBlog(id);
   }
 }

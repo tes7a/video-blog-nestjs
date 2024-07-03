@@ -2,15 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 
-import { UserDBModel } from 'src/models';
 import { User } from 'src/schemas';
-import { CreateUserOutput } from 'src/types';
+import { CreateUserOutput, User as UserType } from 'src/types';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async createUser(userData: UserDBModel): Promise<CreateUserOutput | string> {
+  async createUser(userData: UserType): Promise<CreateUserOutput | string> {
     const {
       id,
       accountData: { createdAt, email, login },

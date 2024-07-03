@@ -16,10 +16,10 @@ export class UsersService {
     const passwordSalt = await genSalt(10);
     const passwordHash = await this._generateHash(password, passwordSalt);
 
-    const userData = new UserDBModel(
-      v4(),
-      '',
-      {
+    const { params } = new UserDBModel({
+      id: v4(),
+      token: '',
+      accountData: {
         email,
         passwordHash,
         passwordSalt,
@@ -27,14 +27,14 @@ export class UsersService {
         login,
         createdAt: new Date().toISOString(),
       },
-      {
+      emailConfirmation: {
         confirmationCode: '',
-        expirationDate: new Date(),
+        expirationDate: new Date().toISOString(),
         isConfirmed: true,
       },
-    );
+    });
 
-    return await this.usersRepository.createUser(userData);
+    return await this.usersRepository.createUser(params);
   }
 
   async deleteUser(id: string): Promise<boolean> {
