@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { NewestLikes, NewestLikesSchema } from './newest-likes.schema';
+import { NewestLikes } from './newest-likes.schema';
 import { UserRatings, UserRatingsSchema } from './user-ratings.schema';
 
-@Schema()
+@Schema({ _id: false })
 export class ExtendedLikesInfo {
   @Prop()
   likesCount: number;

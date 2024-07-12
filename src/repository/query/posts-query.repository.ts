@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
 import { Post } from '../../schemas';
@@ -27,49 +27,55 @@ export class PostsQueryRepository {
       },
     } = payload;
 
-    const filterCondition = {
-      blogId: { $regex: blogId ?? '' },
-    };
-
-    const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
-    const totalCount = await this.postModel.countDocuments(filterCondition);
-
-    const filteredArray = await this.postModel
-      .find(filterCondition, {
-        projection: { _id: 0 },
-      })
-      .find()
-      .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
-      .skip(startIndex)
-      .limit(Number(pageSize))
-      .lean();
-
-    const pagesCount = Math.ceil(totalCount / Number(pageSize));
-    const items = filteredArray.map((post) => {
-      return {
-        ...omit(post, '_id', '__v'),
-        extendedLikesInfo: {
-          dislikesCount: post.extendedLikesInfo.dislikesCount,
-          likesCount: post.extendedLikesInfo.likesCount,
-          myStatus: this._getMyStatus(
-            post.extendedLikesInfo.userRatings,
-            userId,
-          ),
-          newestLikes: this._getNewestLikes(
-            post.extendedLikesInfo.newestLikes,
-            userId,
-          ),
-        },
+    try {
+      const filterCondition = {
+        blogId: { $regex: blogId ?? '' },
       };
-    });
 
-    return {
-      pagesCount,
-      page: Number(pageNumber),
-      pageSize: Number(pageSize),
-      totalCount,
-      items,
-    };
+      const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
+      const totalCount = await this.postModel.countDocuments(filterCondition);
+
+      const filteredArray = await this.postModel
+        .find(filterCondition, {
+          projection: { _id: 0 },
+        })
+        .find()
+        .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+        .skip(startIndex)
+        .limit(Number(pageSize))
+        .lean();
+
+      const pagesCount = Math.ceil(totalCount / Number(pageSize));
+      const items = filteredArray.map((post) => {
+        return {
+          ...omit(post, '_id', '__v'),
+          extendedLikesInfo: {
+            dislikesCount: post.extendedLikesInfo.dislikesCount,
+            likesCount: post.extendedLikesInfo.likesCount,
+            myStatus: this._getMyStatus(
+              post.extendedLikesInfo.userRatings,
+              userId,
+            ),
+            newestLikes: this._getNewestLikes(
+              post.extendedLikesInfo.newestLikes,
+              userId,
+            ),
+          },
+        };
+      });
+
+      return {
+        pagesCount,
+        page: Number(pageNumber),
+        pageSize: Number(pageSize),
+        totalCount,
+        items,
+      };
+    } catch (e) {
+      if (e instanceof MongooseError) {
+        return e.message;
+      }
+    }
   }
 
   _getMyStatus(userRatings?: Array<UserRatings>, userId?: string) {

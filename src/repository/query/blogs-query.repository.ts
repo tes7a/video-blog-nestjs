@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
-import { map, pick } from 'lodash';
+import { omit } from 'lodash';
 
 import { Blog } from '../../schemas';
 import { GetBlogsDTO } from '../../dto';
@@ -37,16 +37,8 @@ export class BlogsQueryRepository {
         .lean();
 
       const pagesCount: number = Math.ceil(totalCount / Number(pageSize));
-      const items: CreateBlogOutput[] = map(sortedBlogs, (blog) => ({
-        ...pick(
-          blog,
-          'id',
-          'name',
-          'description',
-          'websiteUrl',
-          'createdAt',
-          'isMembership',
-        ),
+      const items: CreateBlogOutput[] = sortedBlogs.map((blog) => ({
+        ...omit(blog, ['_id', '__v']),
       }));
 
       return {

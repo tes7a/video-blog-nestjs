@@ -19,3 +19,11 @@ export interface Comment {
 }
 
 export type GetCommentOutput = Omit<Comment, 'postId' | 'userRatings'>;
+
+export interface GetCommentsOutput {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: GetCommentOutput[];
+}

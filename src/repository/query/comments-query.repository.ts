@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
 import { Comment } from '../../schemas';
-import { UserRatings } from '../../types';
+import { GetCommentsOutput, UserRatings } from '../../types';
 import { CreateCommentDTO } from '../../dto';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class CommentsQueryRepository {
     postId: string;
     query: CreateCommentDTO;
     userId?: string;
-  }) {
+  }): Promise<GetCommentsOutput | string> {
     const {
       postId,
       userId,
@@ -29,42 +29,48 @@ export class CommentsQueryRepository {
       },
     } = payload;
 
-    const filterCondition = {
-      postId: { $regex: postId ?? '' },
-    };
-
-    const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
-    const totalCount = await this.commentModel.countDocuments({
-      postId,
-    });
-
-    const filteredArray = await this.commentModel
-      .find(filterCondition, { projection: { _id: 0 } })
-      .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
-      .skip(startIndex)
-      .limit(Number(pageSize))
-      .lean();
-
-    const pagesCount = Math.ceil(totalCount / Number(pageSize));
-
-    const items = filteredArray.map((comment) => {
-      return {
-        ...omit(comment, '_id', '__v'),
-        likesInfo: {
-          dislikesCount: comment.likesInfo.dislikesCount,
-          likesCount: comment.likesInfo.likesCount,
-          myStatus: this._getMyStatus(comment.likesInfo.userRatings, userId),
-        },
+    try {
+      const filterCondition = {
+        postId: { $regex: postId ?? '' },
       };
-    });
 
-    return {
-      pagesCount,
-      page: Number(pageNumber),
-      pageSize: Number(pageSize),
-      totalCount,
-      items,
-    };
+      const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
+      const totalCount = await this.commentModel.countDocuments({
+        postId,
+      });
+
+      const filteredArray = await this.commentModel
+        .find(filterCondition, { projection: { _id: 0 } })
+        .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+        .skip(startIndex)
+        .limit(Number(pageSize))
+        .lean();
+
+      const pagesCount = Math.ceil(totalCount / Number(pageSize));
+
+      const items = filteredArray.map((comment) => {
+        return {
+          ...omit(comment, '_id', '__v'),
+          likesInfo: {
+            dislikesCount: comment.likesInfo.dislikesCount,
+            likesCount: comment.likesInfo.likesCount,
+            myStatus: this._getMyStatus(comment.likesInfo.userRatings, userId),
+          },
+        };
+      });
+
+      return {
+        pagesCount,
+        page: Number(pageNumber),
+        pageSize: Number(pageSize),
+        totalCount,
+        items,
+      };
+    } catch (e) {
+      if (e instanceof MongooseError) {
+        return e.message;
+      }
+    }
   }
 
   _getMyStatus(userRatings?: Array<UserRatings>, userId?: string) {
