@@ -39,7 +39,7 @@ import {
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URL || `mongodb://0.0.0.0:27017`),
+    MongooseModule.forRoot(process.env.MONGO_URL),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Blog.name, schema: BlogSchema },
