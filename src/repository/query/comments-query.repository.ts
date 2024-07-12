@@ -29,13 +29,17 @@ export class CommentsQueryRepository {
       },
     } = payload;
 
+    const filterCondition = {
+      postId: { $regex: postId ?? '' },
+    };
+
     const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
     const totalCount = await this.commentModel.countDocuments({
       postId,
     });
 
     const filteredArray = await this.commentModel
-      .find({ postId }, { projection: { _id: 0 } })
+      .find(filterCondition, { projection: { _id: 0 } })
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip(startIndex)
       .limit(Number(pageSize))

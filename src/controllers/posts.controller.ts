@@ -36,13 +36,6 @@ export class PostsController {
     return response.status(HttpStatus.OK).send(data);
   }
 
-  @Get()
-  async getAllPosts(@Query() query: GetPostsDTO, @Res() response: Response) {
-    const data = await this.postsQuery.getAllPosts({ query });
-    if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
-    return response.status(HttpStatus.OK).send(data);
-  }
-
   @Get('/:id/comments')
   async getCommentsByPostId(
     @Param('id') id: string,
@@ -50,6 +43,13 @@ export class PostsController {
     @Res() response: Response,
   ) {
     const data = await this.commentsQuery.getAllComments({ query, postId: id });
+    if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
+    return response.status(HttpStatus.OK).send(data);
+  }
+
+  @Get()
+  async getAllPosts(@Query() query: GetPostsDTO, @Res() response: Response) {
+    const data = await this.postsQuery.getAllPosts({ query });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

@@ -28,7 +28,7 @@ export class PostsQueryRepository {
     } = payload;
 
     const filterCondition = {
-      blogId: { $regex: blogId },
+      blogId: { $regex: blogId ?? '' },
     };
 
     const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
