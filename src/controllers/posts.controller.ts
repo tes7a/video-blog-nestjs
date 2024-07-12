@@ -14,13 +14,15 @@ import { Response } from 'express';
 
 import { PostsService } from 'src/services';
 import { CreatePostDTO, GetPostsDTO, UpdatePostDTO } from 'src/dto';
-import { PostsQueryRepository } from 'src/repository';
+import { CommentsQueryRepository, PostsQueryRepository } from 'src/repository';
+import { CreateCommentDTO } from 'src/dto/comment/getComment.dto';
 
 @Controller('/posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
     private postsQuery: PostsQueryRepository,
+    private commentsQuery: CommentsQueryRepository,
   ) {}
 
   @Get('/:id')
@@ -33,6 +35,17 @@ export class PostsController {
   @Get()
   async getAllPosts(@Query() query: GetPostsDTO, @Res() response: Response) {
     const data = await this.postsQuery.getAllPosts({ query });
+    if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
+    return response.status(HttpStatus.OK).send(data);
+  }
+
+  @Get('/:id/comments')
+  async getCommentsByPostId(
+    @Param('id') id: string,
+    @Query() query: CreateCommentDTO,
+    @Res() response: Response,
+  ) {
+    const data = await this.commentsQuery.getAllComments({ query, postId: id });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

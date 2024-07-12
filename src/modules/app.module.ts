@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import {
   BlogsController,
+  CommentsController,
   PostsController,
   ResetController,
   UsersController,
@@ -12,19 +13,28 @@ import {
   BlogsRepository,
   UsersRepository,
   PostsRepository,
+  CommentsRepository,
   BlogsQueryRepository,
   UsersQueryRepository,
   PostsQueryRepository,
+  CommentsQueryRepository,
 } from 'src/repository';
 import {
   Blog,
   BlogSchema,
+  Comment,
+  CommentSchema,
   Post,
   PostSchema,
   User,
   UserSchema,
 } from 'src/schemas';
-import { BlogsService, PostsService, UsersService } from 'src/services';
+import {
+  BlogsService,
+  CommentsService,
+  PostsService,
+  UsersService,
+} from 'src/services';
 
 @Module({
   imports: [
@@ -34,6 +44,7 @@ import { BlogsService, PostsService, UsersService } from 'src/services';
       { name: User.name, schema: UserSchema },
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
   ],
   controllers: [
@@ -41,17 +52,21 @@ import { BlogsService, PostsService, UsersService } from 'src/services';
     ResetController,
     BlogsController,
     PostsController,
+    CommentsController,
   ],
   providers: [
     UsersService,
     BlogsService,
     PostsService,
+    CommentsService,
     UsersRepository,
     BlogsRepository,
     PostsRepository,
+    CommentsRepository,
     UsersQueryRepository,
     BlogsQueryRepository,
     PostsQueryRepository,
+    CommentsQueryRepository,
   ],
 })
 export class AppModule {}

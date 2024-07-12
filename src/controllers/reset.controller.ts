@@ -11,6 +11,7 @@ export class ResetController {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
     @InjectModel(Post.name) private postModel: Model<Post>,
+    @InjectModel(Post.name) private commentModel: Model<Comment>,
   ) {}
 
   @Delete('/all-data')
@@ -19,6 +20,7 @@ export class ResetController {
       this.userModel.deleteMany({}),
       this.blogModel.deleteMany({}),
       this.postModel.deleteMany({}),
+      this.commentModel.deleteMany({}),
     ]);
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
