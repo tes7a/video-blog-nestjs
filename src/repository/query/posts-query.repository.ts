@@ -3,13 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
-import { Post } from '../../schemas';
+import { Blog, Post } from '../../schemas';
 import { GetPostsDTO } from '../../dto';
 import { NewestLikes, UserRatings } from '../../types';
 
 @Injectable()
 export class PostsQueryRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
+  constructor(
+    @InjectModel(Post.name) private postModel: Model<Post>,
+    @InjectModel(Blog.name) private blogModel: Model<Blog>,
+  ) {}
 
   async getAllPosts(payload: {
     blogId?: string;
@@ -28,6 +31,10 @@ export class PostsQueryRepository {
     } = payload;
 
     try {
+      if (blogId) {
+        await this._checkBlogExists(blogId);
+      }
+
       const filterCondition = {
         blogId: { $regex: blogId ?? '' },
       };
@@ -93,5 +100,12 @@ export class PostsQueryRepository {
         login: like.login,
       }))
       .slice(0, 3);
+  }
+
+  async _checkBlogExists(id: string): Promise<void> {
+    const blog = await this.blogModel.findOne({ id });
+    if (!blog) {
+      throw new Error('Blog not found');
+    }
   }
 }
