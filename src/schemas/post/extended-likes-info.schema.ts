@@ -14,7 +14,7 @@ export class ExtendedLikesInfo {
   @Prop()
   myStatus: string;
 
-  @Prop({ type: NewestLikesSchema })
+  @Prop()
   newestLikes: Array<NewestLikes>;
 
   @Prop({ type: UserRatingsSchema })
