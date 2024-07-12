@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { map, pick } from 'lodash';
 
-import { Blog } from 'src/schemas';
-import { GetBlogsDTO } from 'src/dto';
-import { CreateBlogOutput, GetBlogsOutput } from 'src/types';
+import { Blog } from '../../schemas';
+import { GetBlogsDTO } from '../../dto';
+import { CreateBlogOutput, GetBlogsOutput } from '../../types';
 
 @Injectable()
 export class BlogsQueryRepository {

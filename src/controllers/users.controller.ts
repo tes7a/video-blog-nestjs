@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { CreateUserDTO, GetUsersDTO } from 'src/dto';
-import { UsersQueryRepository } from 'src/repository';
-import { UsersService } from 'src/services';
+import { CreateUserDTO, GetUsersDTO } from '../dto';
+import { UsersQueryRepository } from '../repository';
+import { UsersService } from '../services';
 
 @Controller('/users')
 export class UsersController {

@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { omit } from 'lodash';
 
-import { Comment } from 'src/schemas';
-import { CreateCommentDTO } from 'src/dto/comment/getComment.dto';
-import { UserRatings } from 'src/types';
+import { Comment } from '../../schemas';
+import { UserRatings } from '../../types';
+import { CreateCommentDTO } from '../../dto';
 
 @Injectable()
 export class CommentsQueryRepository {

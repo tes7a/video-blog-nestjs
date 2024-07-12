@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 
-import { User } from 'src/schemas';
-import { CreateUserOutput, User as UserType } from 'src/types';
+import { User } from '../schemas';
+import { CreateUserOutput, User as UserType } from '../types';
 
 @Injectable()
 export class UsersRepository {

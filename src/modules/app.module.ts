@@ -8,7 +8,7 @@ import {
   PostsController,
   ResetController,
   UsersController,
-} from 'src/controllers';
+} from '../controllers';
 import {
   BlogsRepository,
   UsersRepository,
@@ -18,7 +18,7 @@ import {
   UsersQueryRepository,
   PostsQueryRepository,
   CommentsQueryRepository,
-} from 'src/repository';
+} from '../repository';
 import {
   Blog,
   BlogSchema,
@@ -28,13 +28,13 @@ import {
   PostSchema,
   User,
   UserSchema,
-} from 'src/schemas';
+} from '../schemas';
 import {
   BlogsService,
   CommentsService,
   PostsService,
   UsersService,
-} from 'src/services';
+} from '../services';
 
 @Module({
   imports: [

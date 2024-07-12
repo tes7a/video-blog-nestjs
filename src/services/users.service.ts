@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { genSalt, hash } from 'bcrypt';
 
-import { CreateUserDTO } from 'src/dto';
-import { UserDBModel } from 'src/models';
-import { UsersRepository } from 'src/repository';
-import { CreateUserOutput } from 'src/types';
+import { CreateUserDTO } from '../dto';
+import { UserDBModel } from '../models';
+import { UsersRepository } from '../repository';
+import { CreateUserOutput } from '../types';
 
 @Injectable()
 export class UsersService {

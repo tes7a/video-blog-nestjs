@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { omit } from 'lodash';
 
-import { Post } from 'src/schemas';
-import { GetPostsDTO } from 'src/dto';
-import { NewestLikes, UserRatings } from 'src/types';
+import { Post } from '../../schemas';
+import { GetPostsDTO } from '../../dto';
+import { NewestLikes, UserRatings } from '../../types';
 
 @Injectable()
 export class PostsQueryRepository {
