@@ -7,11 +7,11 @@ import { CreateBlogDTO, UpdateBlogDTO } from 'src/dto';
 import { CreateBlogOutput } from 'src/types';
 
 @Injectable()
-export class BlogService {
-  constructor(private blogRepository: BlogsRepository) {}
+export class BlogsService {
+  constructor(private blogsRepository: BlogsRepository) {}
 
   async getBlogById(id: string): Promise<CreateBlogOutput | undefined> {
-    return await this.blogRepository.getBlogById(id);
+    return await this.blogsRepository.getBlogById(id);
   }
 
   async createBlog(payload: CreateBlogDTO): Promise<CreateBlogOutput | string> {
@@ -25,17 +25,17 @@ export class BlogService {
       isMembership: true,
     });
 
-    return await this.blogRepository.createBlog(params);
+    return await this.blogsRepository.createBlog(params);
   }
 
   async updateBlog(payload: {
     id: string;
     data: UpdateBlogDTO;
   }): Promise<boolean> {
-    return await this.blogRepository.updateBlog(payload);
+    return await this.blogsRepository.updateBlog(payload);
   }
 
   async deleteBlog(id: string): Promise<boolean> {
-    return await this.blogRepository.deleteBlog(id);
+    return await this.blogsRepository.deleteBlog(id);
   }
 }

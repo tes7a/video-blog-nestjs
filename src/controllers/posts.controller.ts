@@ -20,7 +20,7 @@ import { PostsQueryRepository } from 'src/repository';
 export class PostsController {
   constructor(
     private postsService: PostsService,
-    private postQuery: PostsQueryRepository,
+    private postsQuery: PostsQueryRepository,
   ) {}
 
   @Get('/:id')
@@ -32,7 +32,7 @@ export class PostsController {
 
   @Get()
   async getAllPosts(@Query() query: GetPostsDTO, @Res() response: Response) {
-    const data = await this.postQuery.getAllPosts({ query });
+    const data = await this.postsQuery.getAllPosts({ query });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

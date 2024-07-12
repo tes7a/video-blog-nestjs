@@ -27,19 +27,17 @@ export class PostsQueryRepository {
       },
     } = payload;
 
-    //TODO: need add when was filter condition
-    // const filterCondition = {
-    //   blogId: { $regex: blogId },
-    // };
+    const filterCondition = {
+      blogId: { $regex: blogId },
+    };
 
     const startIndex: number = (Number(pageNumber) - 1) * Number(pageSize);
-    // const totalCount = await this.postModel.countDocuments(filterCondition);
-    const totalCount = await this.postModel.countDocuments();
+    const totalCount = await this.postModel.countDocuments(filterCondition);
 
     const filteredArray = await this.postModel
-      // .find(filterCondition, {
-      //     projection: { _id: 0 },
-      //   })
+      .find(filterCondition, {
+        projection: { _id: 0 },
+      })
       .find()
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip(startIndex)

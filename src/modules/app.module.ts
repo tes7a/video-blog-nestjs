@@ -24,7 +24,7 @@ import {
   User,
   UserSchema,
 } from 'src/schemas';
-import { BlogService, PostsService, UsersService } from 'src/services';
+import { BlogsService, PostsService, UsersService } from 'src/services';
 
 @Module({
   imports: [
@@ -44,7 +44,7 @@ import { BlogService, PostsService, UsersService } from 'src/services';
   ],
   providers: [
     UsersService,
-    BlogService,
+    BlogsService,
     PostsService,
     UsersRepository,
     BlogsRepository,
