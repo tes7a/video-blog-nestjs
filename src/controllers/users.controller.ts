@@ -11,9 +11,10 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { CreateUserDTO, GetUsersDTO } from '../dto';
+import { GetUsersDTO } from '../dto';
 import { UsersQueryRepository } from '../repository';
 import { UsersService } from '../services';
+import { UserValidation } from '../validation';
 
 @Controller('/users')
 export class UsersController {
@@ -32,7 +33,7 @@ export class UsersController {
   @Post()
   async createUser(
     @Body()
-    body: CreateUserDTO,
+    body: UserValidation,
     @Res() response: Response,
   ) {
     const data = await this.users.createUser(body);
