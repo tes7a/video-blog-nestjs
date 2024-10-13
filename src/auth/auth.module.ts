@@ -10,10 +10,8 @@ import { JwtAuthGuard, LocalAuthGuard } from './guards';
 @Module({
   imports: [
     JwtModule.register({
-      //TODO: Create env warning,
-      secret: 'ENV.CONSTANT.warning',
-      //TODO: Create env variable for expiration token,
-      signOptions: { expiresIn: '60s' },
+      secret: process.env.TOKEN_SECRET_WARNING,
+      signOptions: { expiresIn: process.env.TOKEN_TIME_EXPIRATION },
     }),
   ],
   controllers: [AuthController],

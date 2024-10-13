@@ -6,7 +6,7 @@ import { HttpExceptionFilter } from './filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  //TODO: find why have error whe use custom validation???
+  //TODO: find why have error when use custom validation???
   app.useGlobalPipes(
     new ValidationPipe({
       stopAtFirstError: true,
