@@ -12,14 +12,15 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { PostsService } from '../services';
 import {
   CreateCommentDTO,
   CreatePostDTO,
   GetPostsDTO,
   UpdatePostDTO,
 } from '../dto';
-import { CommentsQueryRepository, PostsQueryRepository } from '../repository';
+import { PostsService } from './posts.service';
+import { PostsQueryRepository } from './posts-query.repository';
+import { CommentsQueryRepository } from 'src/comments/comments-query.repository';
 
 @Controller('/posts')
 export class PostsController {

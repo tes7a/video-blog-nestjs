@@ -19,8 +19,10 @@ import {
   GetPostsDTO,
   UpdateBlogDTO,
 } from '../dto';
-import { BlogsQueryRepository, PostsQueryRepository } from '../repository';
-import { BlogsService, PostsService } from '../services';
+import { BlogsService } from './blogs.service';
+import { PostsService } from 'src/posts/posts.service';
+import { BlogsQueryRepository } from './blogs-query.repository';
+import { PostsQueryRepository } from 'src/posts/posts-query.repository';
 
 @Controller('/blogs')
 export class BlogsController {

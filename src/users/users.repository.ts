@@ -29,6 +29,24 @@ export class UsersRepository {
     }
   }
 
+  async findByLoginOrEmail(
+    loginOrEmail: string,
+  ): Promise<UserType | undefined> {
+    const user = await this.userModel
+      .findOne({
+        $or: [
+          { 'accountData.email': loginOrEmail },
+          { 'accountData.login': loginOrEmail },
+        ],
+      })
+      .lean<UserType>()
+      .exec();
+
+    if (!user) return undefined;
+
+    return user;
+  }
+
   async deleteUser(id: string): Promise<boolean> {
     const { deletedCount } = await this.userModel.deleteOne({ id });
 

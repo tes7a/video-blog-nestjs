@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { map, pick } from 'lodash';
 
-import { User } from '../../schemas';
-import { GetUsersOutput } from '../../types';
-import { GetUsersDTO } from '../../dto';
+import { User } from '../schemas';
+import { GetUsersOutput } from '../types';
+import { GetUsersDTO } from '../dto';
 
 @Injectable()
 export class UsersQueryRepository {

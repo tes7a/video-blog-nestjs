@@ -4,8 +4,8 @@ import { genSalt, hash } from 'bcrypt';
 
 import { CreateUserDTO } from '../dto';
 import { UserDBModel } from '../models';
-import { UsersRepository } from '../repository';
-import { CreateUserOutput } from '../types';
+import { UsersRepository } from './users.repository';
+import { CreateUserOutput, User } from '../types';
 
 @Injectable()
 export class UsersService {
@@ -41,7 +41,25 @@ export class UsersService {
     return await this.usersRepository.deleteUser(id);
   }
 
-  async _generateHash(password: string, salt: string) {
+  async verificationCredentials(
+    loginOrEmail: string,
+    password: string,
+  ): Promise<undefined | User> {
+    const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail);
+
+    if (!user?.emailConfirmation?.isConfirmed) return undefined;
+
+    const passwordHash = await this._generateHash(
+      password,
+      user.accountData.passwordSalt,
+    );
+
+    if (user.accountData.passwordHash !== passwordHash) return undefined;
+
+    return user;
+  }
+
+  private async _generateHash(password: string, salt: string) {
     return await hash(password, salt);
   }
 }

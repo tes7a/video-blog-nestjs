@@ -1,22 +1,22 @@
 import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { AuthService } from './auth.service';
 import { CurrentUserId } from './decorators';
 import { JwtAuthGuard, LocalAuthGuard } from './guards';
+import { User } from 'src/types';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
     private jwtService: JwtService,
   ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@CurrentUserId() user: number) {
+  async login(@CurrentUserId() user: User) {
     //TODO: implement logic for extract user end return JWT
-    return { access_token: this.jwtService.sign(user) };
+    const payload = { sub: user.id, username: user.accountData.login };
+    return { access_token: this.jwtService.sign(payload) };
   }
 
   @UseGuards(JwtAuthGuard)

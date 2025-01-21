@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Model } from 'mongoose';
 
-import { Blog, Post, User } from '../schemas';
+import { Blog, Post, User } from './schemas';
 
 @Controller('/testing')
 export class ResetController {

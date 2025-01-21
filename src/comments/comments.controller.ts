@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 
-import { CommentsService } from '../services';
+import { CommentsService } from './comments.service';
 
 @Controller('/comments')
 export class CommentsController {
