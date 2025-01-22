@@ -7,9 +7,7 @@ import { User } from 'src/types';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(
-    private jwtService: JwtService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')

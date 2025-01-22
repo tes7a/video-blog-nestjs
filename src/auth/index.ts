@@ -10,7 +10,7 @@ import { UsersModule } from 'src/users';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: process.env.LOCAL_GUARD }),
     JwtModule.register({
       secret: process.env.TOKEN_SECRET_WARNING,
       signOptions: { expiresIn: process.env.TOKEN_TIME_EXPIRATION },

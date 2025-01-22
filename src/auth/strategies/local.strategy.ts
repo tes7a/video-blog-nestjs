@@ -8,11 +8,13 @@ import { User } from 'src/types';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super();
+    super({
+      usernameField: 'loginOrEmail',
+      passwordField: 'password',
+    });
   }
 
   async validate(loginOrEmail: string, password: string): Promise<User> {
-
     const user = await this.authService.validateUser(loginOrEmail, password);
 
     if (!user) {
