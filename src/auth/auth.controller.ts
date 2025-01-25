@@ -1,5 +1,13 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 
 import { CurrentUserId } from './decorators';
 import { JwtAuthGuard, LocalAuthGuard } from './guards';
@@ -11,10 +19,10 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@CurrentUserId() user: User) {
-    //TODO: implement logic for extract user end return JWT
-    const payload = { sub: user.id, username: user.accountData.login };
-    return { access_token: this.jwtService.sign(payload) };
+  async login(@CurrentUserId() userId: User, @Res() response: Response) {
+    const access_token = await this.jwtService.sign({ userId });
+
+    return response.status(HttpStatus.OK).send({ access_token });
   }
 
   @UseGuards(JwtAuthGuard)

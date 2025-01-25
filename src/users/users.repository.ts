@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
+import { omit } from 'lodash';
 
 import { User } from '../schemas';
 import { CreateUserOutput, User as UserType } from '../types';
@@ -44,7 +45,9 @@ export class UsersRepository {
 
     if (!user) return undefined;
 
-    return user;
+    return {
+      ...omit(user, '_id', '__v'),
+    };
   }
 
   async deleteUser(id: string): Promise<boolean> {

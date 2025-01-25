@@ -21,12 +21,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
       responseBody.message.forEach((m) => errorsResponse.errors.push(m));
 
-      response.status(status).json(errorsResponse);
+      return response.status(status).json(errorsResponse);
     }
 
-    response.status(status).json({
+    return response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
+      message: exception.message,
       path: request.url,
     });
   }

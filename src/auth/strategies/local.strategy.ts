@@ -9,8 +9,8 @@ import { User } from 'src/types';
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super({
-      usernameField: 'loginOrEmail',
-      passwordField: 'password',
+      usernameField: process.env.USERNAME_FIELD,
+      passwordField: process.env.PASSWORD_FIELD,
     });
   }
 
@@ -18,7 +18,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateUser(loginOrEmail, password);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        'User not found. Please check your credentials.',
+      );
     }
 
     return user;
