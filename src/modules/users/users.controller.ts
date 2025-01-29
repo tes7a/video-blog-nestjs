@@ -12,9 +12,9 @@ import {
 import { Response } from 'express';
 
 import { UsersService } from './users.service';
+import { UserValidation } from './validation';
 import { UsersQueryRepository } from './users-query.repository';
 import { GetUsersDTO } from 'src/dto';
-import { UserValidation } from './validation/user.validation';
 
 @Controller('/users')
 export class UsersController {

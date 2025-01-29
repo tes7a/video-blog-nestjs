@@ -52,9 +52,10 @@ export class UsersRepository {
 
   async findUserById(userId: string): Promise<UserType> {
     const user = await this.userModel
-      .findOne({ userId })
+      .findOne({ id: userId })
       .lean<UserType>()
       .exec();
+
     if (!user) throw new Error('User not found.');
 
     return {

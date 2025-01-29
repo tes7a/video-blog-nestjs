@@ -8,9 +8,9 @@ export const CurrentUser = createParamDecorator(
   ): Pick<User, 'id'> & Pick<User['accountData'], 'email' | 'login'> => {
     const request = context.switchToHttp().getRequest();
 
-    if (!request.accountData) throw new Error('Jwt Guard must be used');
+    if (!request.user) throw new Error('Jwt Guard must be used');
 
-    return request.accountData as Pick<User, 'id'> &
+    return request.user as Pick<User, 'id'> &
       Pick<User['accountData'], 'email' | 'login'>;
   },
 );
