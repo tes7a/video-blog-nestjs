@@ -36,7 +36,7 @@ export class UsersController {
     body: UserValidation,
     @Res() response: Response,
   ) {
-    const data = await this.users.createUser(body);
+    const data = await this.users.createUserByAdmin(body);
     if (typeof data === 'string')
       return response.status(HttpStatus.NOT_FOUND).send(data);
     return response.status(HttpStatus.CREATED).send(data);

@@ -11,7 +11,7 @@ export interface User {
   };
   emailConfirmation: {
     confirmationCode: string;
-    expirationDate: string;
+    expirationDate: Date;
     isConfirmed: boolean;
   };
 }

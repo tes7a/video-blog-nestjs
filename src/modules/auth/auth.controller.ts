@@ -1,23 +1,29 @@
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   HttpStatus,
   Post,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 
 import { CurrentUser, CurrentUserId } from './decorators';
 import { JwtAuthGuard, LocalAuthGuard } from './guards';
+import { CodeValidation, RegistrationValidation } from './validation';
 import { User } from 'src/types';
-import { RegistrationValidation } from './validation';
+import { AuthService } from './auth.service';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private authService: AuthService,
+    private jwtService: JwtService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
@@ -42,7 +48,17 @@ export class AuthController {
     @Body() body: RegistrationValidation,
     @Res() response: Response,
   ) {
-    // const isDone = await
+    await this.authService.registerUser(body);
+    return response.send(HttpStatus.NO_CONTENT);
+  }
+
+  @Post('/registration-confirmation')
+  async registrationConfirmation(
+    @Body() body: CodeValidation,
+    @Res() response: Response,
+  ) {
+    const errors = await this.authService.confirmCode(body.code);
+    if (errors) throw new BadRequestException(errors);
     return response.send(HttpStatus.NO_CONTENT);
   }
 }

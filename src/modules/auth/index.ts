@@ -7,7 +7,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy, LocalStrategy } from './strategies';
 import { JwtAuthGuard, LocalAuthGuard } from './guards';
+import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users';
+import { EmailManager } from 'src/managers';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { UsersModule } from '../users';
     JwtStrategy,
     LocalAuthGuard,
     JwtAuthGuard,
+    UsersService,
+    EmailManager,
   ],
   exports: [],
 })

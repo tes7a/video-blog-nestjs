@@ -4,29 +4,36 @@ import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
 import { User } from 'src/schemas';
-import { CreateUserOutput, User as UserType } from 'src/types';
+import { User as UserType } from 'src/types';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async createUser(userData: UserType): Promise<CreateUserOutput | string> {
-    const {
-      id,
-      accountData: { createdAt, email, login },
-    } = userData;
+  async createUser(userData: UserType): Promise<string> {
     try {
+      const user = await this.userModel
+        .findOne({
+          $or: [
+            { 'accountData.email': userData.accountData.email },
+            { 'accountData.login': userData.accountData.login },
+          ],
+        })
+        .lean<UserType>()
+        .exec();
+
+      if (user) throw new Error('The user already exists.');
+
       await this.userModel.create(userData);
-      return {
-        id,
-        login,
-        email,
-        createdAt,
-      };
+      return;
     } catch (e) {
       if (e instanceof MongooseError) {
         return e.message;
       }
+      if (e instanceof Error) {
+        return e.message;
+      }
+      return 'Unknown error occurred';
     }
   }
 
@@ -61,6 +68,35 @@ export class UsersRepository {
     return {
       ...omit(user, '_id', '__v'),
     };
+  }
+
+  async confirmCode(code: string): Promise<string> {
+    try {
+      const user = await this.userModel.findOne({
+        'emailConfirmation.confirmationCode': code,
+      });
+
+      if (!user) throw new Error('User not found.');
+
+      if (
+        user.emailConfirmation.isConfirmed ||
+        user.emailConfirmation!.expirationDate! < new Date()
+      )
+        throw new Error('Email confirmed, or the code has expired.');
+
+      user.emailConfirmation.isConfirmed = true;
+
+      await user.save();
+      return;
+    } catch (e) {
+      if (e instanceof MongooseError) {
+        return e.message;
+      }
+      if (e instanceof Error) {
+        return e.message;
+      }
+      return 'Unknown error occurred';
+    }
   }
 
   async deleteUser(id: string): Promise<boolean> {

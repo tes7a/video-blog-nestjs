@@ -6,7 +6,7 @@ export class EmailConfirmation {
   confirmationCode: string;
 
   @Prop()
-  expirationDate: string;
+  expirationDate: Date;
 
   @Prop()
   isConfirmed: boolean;
