@@ -70,6 +70,19 @@ export class UsersRepository {
     };
   }
 
+  async findUserByRecoveryCode(recoveryCode: string): Promise<UserType> {
+    const user = await this.userModel
+      .findOne({ 'accountData.recoveryCode': recoveryCode })
+      .lean<UserType>()
+      .exec();
+
+    if (!user) throw new Error('User not found.');
+
+    return {
+      ...omit(user, '_id', '__v'),
+    };
+  }
+
   async confirmCode(code: string): Promise<string> {
     try {
       const user = await this.userModel.findOne({
@@ -88,6 +101,23 @@ export class UsersRepository {
 
       await user.save();
       return;
+    } catch (e) {
+      if (e instanceof MongooseError) {
+        return e.message;
+      }
+      if (e instanceof Error) {
+        return e.message;
+      }
+      return 'Unknown error occurred';
+    }
+  }
+
+  async updateUser(userDto: UserType) {
+    try {
+      let user = await this.userModel.findOne({ id: userDto.id });
+      if (!user) throw new Error('User not found');
+      user = Object.assign(user, userDto);
+      await user.save();
     } catch (e) {
       if (e instanceof MongooseError) {
         return e.message;

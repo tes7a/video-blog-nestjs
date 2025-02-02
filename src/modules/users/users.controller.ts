@@ -8,14 +8,17 @@ import {
   HttpStatus,
   Get,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 
+import { UsersQueryRepository } from './users-query.repository';
 import { UsersService } from './users.service';
 import { UserValidation } from './validation';
-import { UsersQueryRepository } from './users-query.repository';
+import { BasicAuthGuard } from './guards';
 import { GetUsersDTO } from 'src/dto';
 
+@UseGuards(BasicAuthGuard)
 @Controller('/users')
 export class UsersController {
   constructor(

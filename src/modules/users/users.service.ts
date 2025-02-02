@@ -16,7 +16,7 @@ export class UsersService {
     data: CreateUserDTO,
   ): Promise<CreateUserOutput | string> {
     const { email, login, password } = data;
-    const passwordSalt = await genSalt(10);
+    const passwordSalt = await this.genSalt();
     const passwordHash = await this._generateHash(password, passwordSalt);
 
     const { params } = new UserDBModel({
@@ -53,7 +53,7 @@ export class UsersService {
     confirmationCode: string,
   ): Promise<User | string> {
     const { email, login, password } = data;
-    const passwordSalt = await genSalt(10);
+    const passwordSalt = await this.genSalt();
     const passwordHash = await this._generateHash(password, passwordSalt);
 
     const { params } = new UserDBModel({
@@ -70,7 +70,7 @@ export class UsersService {
       emailConfirmation: {
         confirmationCode,
         expirationDate: add(new Date(), {
-          seconds: 30,
+          days: 1,
         }),
         isConfirmed: false,
       },
@@ -108,7 +108,11 @@ export class UsersService {
     return user;
   }
 
-  private async _generateHash(password: string, salt: string) {
+  async _generateHash(password: string, salt: string) {
     return await hash(password, salt);
+  }
+
+  async genSalt() {
+    return await genSalt(10);
   }
 }

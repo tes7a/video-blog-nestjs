@@ -18,7 +18,7 @@ import { EmailManager } from 'src/managers';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.TOKEN_TIME_EXPIRATION },
     }),
-    PassportModule.register({ defaultStrategy: process.env.LOCAL_GUARD }),
+    PassportModule,
     UsersModule,
   ],
   controllers: [AuthController],

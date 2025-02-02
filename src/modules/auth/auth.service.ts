@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { add } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { User } from 'src/types';
@@ -33,6 +34,47 @@ export class AuthService {
     return await this.usersService.findUserById(userId);
   }
 
+  async passwordRecover(email: string): Promise<string> {
+    try {
+      const user = await this.usersRepository.findByLoginOrEmail(email);
+
+      const newCode = v4();
+      user.accountData.recoveryCode = newCode;
+
+      await this.usersRepository.updateUser(user);
+      await this.emailManager.passwordRecover(email, newCode);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return e.message;
+      } else if (typeof e === 'string') return e;
+
+      return 'An unknown error occurred';
+    }
+  }
+
+  async setPassword(recoveryCode: string, newPassword: string) {
+    try {
+      const user =
+        await this.usersRepository.findUserByRecoveryCode(recoveryCode);
+      const passwordSalt = await this.usersService.genSalt();
+      const passwordHash = await this.usersService._generateHash(
+        newPassword,
+        passwordSalt,
+      );
+
+      user.accountData.passwordHash = passwordHash;
+      user.accountData.passwordSalt = passwordSalt;
+
+      await this.usersRepository.updateUser(user);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return e.message;
+      } else if (typeof e === 'string') return e;
+
+      return 'An unknown error occurred';
+    }
+  }
+
   async registerUser(data: CreateUserDTO) {
     const confirmationCode = v4();
 
@@ -51,5 +93,31 @@ export class AuthService {
 
   async confirmCode(code: string) {
     return await this.usersRepository.confirmCode(code);
+  }
+
+  async resendingEmail(email: string): Promise<string> {
+    try {
+      const user = await this.usersRepository.findByLoginOrEmail(email);
+      if (
+        user.emailConfirmation.isConfirmed ||
+        user.emailConfirmation!.expirationDate! > new Date()
+      )
+        throw new Error('Email confirmed, or the code has expired.');
+
+      const newCode = v4();
+      user.emailConfirmation.confirmationCode = newCode;
+      user.emailConfirmation.expirationDate = add(new Date(), {
+        days: 1,
+      });
+
+      await this.usersRepository.updateUser(user);
+      await this.emailManager.sendEmail(email, newCode);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return e.message;
+      } else if (typeof e === 'string') return e;
+
+      return 'An unknown error occurred';
+    }
   }
 }

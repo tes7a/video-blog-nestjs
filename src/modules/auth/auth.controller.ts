@@ -14,7 +14,12 @@ import {
 
 import { CurrentUser, CurrentUserId } from './decorators';
 import { JwtAuthGuard, LocalAuthGuard } from './guards';
-import { CodeValidation, RegistrationValidation } from './validation';
+import {
+  CodeValidation,
+  EmailValidation,
+  PasswordValidation,
+  RegistrationValidation,
+} from './validation';
 import { User } from 'src/types';
 import { AuthService } from './auth.service';
 
@@ -43,6 +48,30 @@ export class AuthController {
     return response.status(HttpStatus.OK).send(accountData);
   }
 
+  @Post('/password-recovery')
+  async passwordRecover(
+    @Body() body: EmailValidation,
+    @Res() response: Response,
+  ) {
+    const errors = await this.authService.passwordRecover(body.email);
+    if (errors) throw new BadRequestException(errors);
+    return response.send(HttpStatus.NO_CONTENT);
+  }
+
+  @Post('/new-password')
+  async newPassword(
+    @Body() body: PasswordValidation,
+    @Res() response: Response,
+  ) {
+    const { newPassword, recoveryCode } = body;
+    const errors = await this.authService.setPassword(
+      recoveryCode,
+      newPassword,
+    );
+    if (errors) throw new BadRequestException(errors);
+    return response.send(HttpStatus.NO_CONTENT);
+  }
+
   @Post('/registration')
   async registerUser(
     @Body() body: RegistrationValidation,
@@ -58,6 +87,16 @@ export class AuthController {
     @Res() response: Response,
   ) {
     const errors = await this.authService.confirmCode(body.code);
+    if (errors) throw new BadRequestException(errors);
+    return response.send(HttpStatus.NO_CONTENT);
+  }
+
+  @Post('/registration-email-resending')
+  async registrationResending(
+    @Body() body: EmailValidation,
+    @Res() response: Response,
+  ) {
+    const errors = await this.authService.resendingEmail(body.email);
     if (errors) throw new BadRequestException(errors);
     return response.send(HttpStatus.NO_CONTENT);
   }
