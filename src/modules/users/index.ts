@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersQueryRepository } from './users-query.repository';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
-import { User, UserSchema } from 'src/schemas';
+import { User, UserSchema } from '../../schemas';
 import { UsersController } from './users.controller';
 import { BasicAuthGuard } from './guards';
 import { BasicStrategy } from './strategies';
