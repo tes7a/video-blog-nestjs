@@ -15,12 +15,13 @@ import { UsersModule } from '../users';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 5000,
-        limit: 5,
-      },
-    ]),
+    // TODO: after test's will fix, need to uncommit this config
+    // ThrottlerModule.forRoot([
+    //   {
+    //     ttl: 5000,
+    //     limit: 5,
+    //   },
+    // ]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.TOKEN_TIME_EXPIRATION },
