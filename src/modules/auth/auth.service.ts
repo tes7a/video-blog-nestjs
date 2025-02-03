@@ -2,11 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { add } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { User } from 'src/types';
-import { CreateUserDTO } from 'src/dto';
 import { UsersService } from '../users/users.service';
-import { EmailManager } from 'src/managers';
+import { EmailManager } from '../../managers';
 import { UsersRepository } from '../users/users.repository';
+import { CreateUserDTO } from '../../dto';
+import { User } from '../../types';
 
 @Injectable()
 export class AuthService {

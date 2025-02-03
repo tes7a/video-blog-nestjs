@@ -20,7 +20,7 @@ import {
   CreatePostDTO,
   GetPostsDTO,
   UpdatePostDTO,
-} from 'src/dto';
+} from '../../dto';
 
 @Controller('/posts')
 export class PostsController {

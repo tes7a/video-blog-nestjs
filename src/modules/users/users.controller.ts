@@ -16,7 +16,7 @@ import { UsersQueryRepository } from './users-query.repository';
 import { UsersService } from './users.service';
 import { UserValidation } from './validation';
 import { BasicAuthGuard } from './guards';
-import { GetUsersDTO } from 'src/dto';
+import { GetUsersDTO } from '../../dto';
 
 @UseGuards(BasicAuthGuard)
 @Controller('/users')

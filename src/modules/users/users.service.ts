@@ -4,9 +4,9 @@ import { genSalt, hash } from 'bcrypt';
 import { add } from 'date-fns';
 
 import { UsersRepository } from './users.repository';
-import { CreateUserDTO } from 'src/dto';
-import { CreateUserOutput, User } from 'src/types';
-import { UserDBModel } from 'src/models';
+import { CreateUserDTO } from '../../dto';
+import { UserDBModel } from '../../models';
+import { CreateUserOutput, User } from '../../types';
 
 @Injectable()
 export class UsersService {

@@ -8,7 +8,6 @@ import {
   HttpStatus,
   Post,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 
@@ -20,8 +19,8 @@ import {
   PasswordValidation,
   RegistrationValidation,
 } from './validation';
-import { User } from 'src/types';
 import { AuthService } from './auth.service';
+import { User } from '../../types';
 
 @Controller('/auth')
 export class AuthController {

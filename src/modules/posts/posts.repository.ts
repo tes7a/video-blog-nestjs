@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
-import { Post as PostType } from 'src/types';
-import { Post } from 'src/schemas';
-import { UpdatePostDTO } from 'src/dto';
+import { Post } from '../../schemas';
+import { UpdatePostDTO } from '../../dto';
+import { Post as PostType } from '../../types';
 
 @Injectable()
 export class PostsRepository {

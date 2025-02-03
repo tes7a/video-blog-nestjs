@@ -1,4 +1,4 @@
-import { User } from 'src/types';
+import { User } from '../types';
 
 export class UserDBModel {
   constructor(public params: User) {}

@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
-import { User } from 'src/schemas';
-import { User as UserType } from 'src/types';
+import { User } from '../../schemas';
+import { User as UserType } from '../../types';
 
 @Injectable()
 export class UsersRepository {
