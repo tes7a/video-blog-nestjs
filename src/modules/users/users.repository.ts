@@ -22,12 +22,15 @@ export class UsersRepository {
         .lean<UserType>()
         .exec();
 
-      if (user.accountData.email === userData.accountData.email) {
+      if (user && user.accountData.email === userData.accountData.email) {
         throw {
           message: 'This email is already registered.',
           field: 'email',
         };
-      } else if (user.accountData.login === userData.accountData.login) {
+      } else if (
+        user &&
+        user.accountData.login === userData.accountData.login
+      ) {
         throw {
           message: 'This login is already registered.',
           field: 'login',
