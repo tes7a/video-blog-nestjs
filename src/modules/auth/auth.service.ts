@@ -6,7 +6,7 @@ import { UsersService } from '../users/users.service';
 import { EmailManager } from '../../managers';
 import { UsersRepository } from '../users/users.repository';
 import { CreateUserDTO } from '../../dto';
-import { User } from '../../types';
+import { ErrorType, User } from '../../types';
 
 @Injectable()
 export class AuthService {
@@ -78,12 +78,11 @@ export class AuthService {
   async registerUser(data: CreateUserDTO) {
     const confirmationCode = v4();
 
-    const result: User | string = await this.usersService.registerUser(
-      data,
-      confirmationCode,
-    );
+    const result: User | string | ErrorType =
+      await this.usersService.registerUser(data, confirmationCode);
 
     if (typeof result === 'string') throw new BadRequestException(result);
+    if ('field' in result) throw new BadRequestException(result);
 
     await this.emailManager.sendEmail(
       result.accountData.email,

@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
 import { User } from '../../schemas';
-import { User as UserType } from '../../types';
+import { ErrorType, User as UserType } from '../../types';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async createUser(userData: UserType): Promise<string> {
+  async createUser(userData: UserType): Promise<string | ErrorType> {
     try {
       const user = await this.userModel
         .findOne({
@@ -22,17 +22,29 @@ export class UsersRepository {
         .lean<UserType>()
         .exec();
 
-      if (user) throw new Error('The user already exists.');
+      if (user.accountData.email === userData.accountData.email) {
+        throw {
+          message: 'This email is already registered.',
+          field: 'email',
+        };
+      } else if (user.accountData.login === userData.accountData.login) {
+        throw {
+          message: 'This login is already registered.',
+          field: 'login',
+        };
+      }
 
       await this.userModel.create(userData);
       return;
     } catch (e) {
       if (e instanceof MongooseError) {
         return e.message;
-      }
-      if (e instanceof Error) {
+      } else if (e instanceof Error) {
         return e.message;
+      } else if ('field' in e) {
+        return e;
       }
+
       return 'Unknown error occurred';
     }
   }

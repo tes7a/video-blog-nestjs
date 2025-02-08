@@ -6,7 +6,7 @@ import { add } from 'date-fns';
 import { UsersRepository } from './users.repository';
 import { CreateUserDTO } from '../../dto';
 import { UserDBModel } from '../../models';
-import { CreateUserOutput, User } from '../../types';
+import { CreateUserOutput, ErrorType, User } from '../../types';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +14,7 @@ export class UsersService {
 
   async createUserByAdmin(
     data: CreateUserDTO,
-  ): Promise<CreateUserOutput | string> {
+  ): Promise<CreateUserOutput | string | ErrorType> {
     const { email, login, password } = data;
     const passwordSalt = await this.genSalt();
     const passwordHash = await this._generateHash(password, passwordSalt);
@@ -51,7 +51,7 @@ export class UsersService {
   async registerUser(
     data: CreateUserDTO,
     confirmationCode: string,
-  ): Promise<User | string> {
+  ): Promise<User | string | ErrorType> {
     const { email, login, password } = data;
     const passwordSalt = await this.genSalt();
     const passwordHash = await this._generateHash(password, passwordSalt);
@@ -77,6 +77,7 @@ export class UsersService {
     });
 
     const errors = await this.usersRepository.createUser(params);
+
     if (errors) return errors;
 
     return params;
