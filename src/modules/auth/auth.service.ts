@@ -113,7 +113,7 @@ export class AuthService {
       const newCode = v4();
       user.emailConfirmation.confirmationCode = newCode;
       user.emailConfirmation.expirationDate = add(new Date(), {
-        days: 1,
+        minutes: 5,
       });
 
       await this.usersRepository.updateUser(user);

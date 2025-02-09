@@ -70,7 +70,7 @@ export class UsersService {
       emailConfirmation: {
         confirmationCode,
         expirationDate: add(new Date(), {
-          days: 1,
+          minutes: 5,
         }),
         isConfirmed: false,
       },
