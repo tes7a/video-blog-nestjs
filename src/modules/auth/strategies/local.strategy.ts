@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 import { Strategy } from 'passport-local';
 
 import { AuthService } from '../auth.service';
@@ -7,7 +8,10 @@ import { User } from '../../../types';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private jwtService: JwtService,
+  ) {
     super({
       usernameField: process.env.USERNAME_FIELD,
       passwordField: process.env.PASSWORD_FIELD,
@@ -17,7 +21,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(
     loginOrEmail: string,
     password: string,
-  ): Promise<{ id: User['id'] }> {
+  ): Promise<{ accessToken: string }> {
     const user = await this.authService.validateUser(loginOrEmail, password);
 
     if (!user) {
@@ -26,6 +30,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    return { id: user.id };
+    const accessToken = await this.jwtService.sign({ user });
+
+    return { accessToken };
   }
 }

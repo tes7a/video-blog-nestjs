@@ -108,7 +108,7 @@ export class UsersRepository {
       else if (user.emailConfirmation.isConfirmed) {
         throw {
           message: 'Your email has been confirmed.',
-          field: 'email',
+          field: 'code',
         };
       } else if (user.emailConfirmation!.expirationDate! < new Date()) {
         throw {

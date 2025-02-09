@@ -24,16 +24,12 @@ import { User } from '../../types';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@CurrentUserId() userId: User['id'], @Res() response: Response) {
-    const access_token = await this.jwtService.sign({ userId });
-    return response.status(HttpStatus.OK).send({ access_token });
+  async login(@CurrentUserId() accessToken: string, @Res() response: Response) {
+    return response.status(HttpStatus.OK).send({ accessToken });
   }
 
   @UseGuards(JwtAuthGuard)
