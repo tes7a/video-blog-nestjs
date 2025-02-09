@@ -104,9 +104,8 @@ export class UsersRepository {
         'emailConfirmation.confirmationCode': code,
       });
 
-      if (!user) throw new Error('User not found.');
-
-      if (user.emailConfirmation.isConfirmed) {
+      if (!user) throw { message: 'Invalid code.', field: 'code' };
+      else if (user.emailConfirmation.isConfirmed) {
         throw {
           message: 'Your email has been confirmed.',
           field: 'email',

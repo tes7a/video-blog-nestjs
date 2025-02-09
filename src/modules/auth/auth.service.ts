@@ -94,14 +94,21 @@ export class AuthService {
     return await this.usersRepository.confirmCode(code);
   }
 
-  async resendingEmail(email: string): Promise<string> {
+  async resendingEmail(email: string): Promise<string | ErrorType> {
     try {
       const user = await this.usersRepository.findByLoginOrEmail(email);
-      if (
-        user.emailConfirmation.isConfirmed ||
-        user.emailConfirmation!.expirationDate! > new Date()
-      )
-        throw new Error('Email confirmed, or the code has expired.');
+
+      if (user.emailConfirmation.isConfirmed) {
+        throw {
+          message: 'Your email has been confirmed.',
+          field: 'email',
+        };
+      } else if (user.emailConfirmation!.expirationDate! < new Date()) {
+        throw {
+          message: 'The code has expired.',
+          field: 'code',
+        };
+      }
 
       const newCode = v4();
       user.emailConfirmation.confirmationCode = newCode;
@@ -111,10 +118,14 @@ export class AuthService {
 
       await this.usersRepository.updateUser(user);
       await this.emailManager.sendEmail(email, newCode);
-    } catch (e: unknown) {
+    } catch (e) {
       if (e instanceof Error) {
         return e.message;
-      } else if (typeof e === 'string') return e;
+      } else if (typeof e === 'string') {
+        return e;
+      } else if ('field' in e) {
+        return e;
+      }
 
       return 'An unknown error occurred';
     }
