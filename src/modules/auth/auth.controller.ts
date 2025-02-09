@@ -54,7 +54,7 @@ export class AuthController {
   ) {
     const errors = await this.authService.passwordRecover(body.email);
     if (errors) throw new BadRequestException(errors);
-    return response.send(HttpStatus.NO_CONTENT);
+    return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @Post('/new-password')
@@ -68,7 +68,7 @@ export class AuthController {
       newPassword,
     );
     if (errors) throw new BadRequestException(errors);
-    return response.send(HttpStatus.NO_CONTENT);
+    return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @Post('/registration')
@@ -77,7 +77,7 @@ export class AuthController {
     @Res() response: Response,
   ) {
     await this.authService.registerUser(body);
-    return response.send(HttpStatus.NO_CONTENT);
+    return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @Post('/registration-confirmation')
@@ -87,7 +87,7 @@ export class AuthController {
   ) {
     const errors = await this.authService.confirmCode(body.code);
     if (errors) throw new BadRequestException(errors);
-    return response.send(HttpStatus.NO_CONTENT);
+    return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @Post('/registration-email-resending')
@@ -97,6 +97,6 @@ export class AuthController {
   ) {
     const errors = await this.authService.resendingEmail(body.email);
     if (errors) throw new BadRequestException(errors);
-    return response.send(HttpStatus.NO_CONTENT);
+    return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 }

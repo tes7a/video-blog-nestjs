@@ -103,11 +103,6 @@ export class AuthService {
           message: 'Your email has been confirmed.',
           field: 'email',
         };
-      } else if (user.emailConfirmation!.expirationDate! < new Date()) {
-        throw {
-          message: 'The code has expired.',
-          field: 'code',
-        };
       }
 
       const newCode = v4();
