@@ -98,7 +98,12 @@ export class AuthService {
     try {
       const user = await this.usersRepository.findByLoginOrEmail(email);
 
-      if (user.emailConfirmation.isConfirmed) {
+      if (!user) {
+        throw {
+          message: 'User not found.',
+          field: 'email',
+        };
+      } else if (user.emailConfirmation.isConfirmed) {
         throw {
           message: 'Your email has been confirmed.',
           field: 'email',
