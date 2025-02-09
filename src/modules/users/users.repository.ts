@@ -98,7 +98,7 @@ export class UsersRepository {
     };
   }
 
-  async confirmCode(code: string): Promise<string> {
+  async confirmCode(code: string): Promise<string | ErrorType> {
     try {
       const user = await this.userModel.findOne({
         'emailConfirmation.confirmationCode': code,
@@ -106,11 +106,17 @@ export class UsersRepository {
 
       if (!user) throw new Error('User not found.');
 
-      if (
-        user.emailConfirmation.isConfirmed ||
-        user.emailConfirmation!.expirationDate! < new Date()
-      )
-        throw new Error('Email confirmed, or the code has expired.');
+      if (user.emailConfirmation.isConfirmed) {
+        throw {
+          message: 'Your email has been confirmed.',
+          field: 'email',
+        };
+      } else if (user.emailConfirmation!.expirationDate! < new Date()) {
+        throw {
+          message: 'The code has expired.',
+          field: 'code',
+        };
+      }
 
       user.emailConfirmation.isConfirmed = true;
 
@@ -119,10 +125,12 @@ export class UsersRepository {
     } catch (e) {
       if (e instanceof MongooseError) {
         return e.message;
-      }
-      if (e instanceof Error) {
+      } else if (e instanceof Error) {
         return e.message;
+      } else if ('field' in e) {
+        return e;
       }
+
       return 'Unknown error occurred';
     }
   }
