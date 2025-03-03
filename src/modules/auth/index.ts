@@ -11,10 +11,12 @@ import { JwtStrategy, LocalStrategy } from './strategies';
 import { JwtAuthGuard, LocalAuthGuard } from './guards';
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users';
+import { AuthConfig } from './config';
+import { SharedConfig } from '../../shared';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule,
     // TODO: after test's will fix, need to uncommit this config
     // ThrottlerModule.forRoot([
     //   {
@@ -38,6 +40,8 @@ import { UsersModule } from '../users';
     JwtAuthGuard,
     UsersService,
     EmailManager,
+    SharedConfig,
+    AuthConfig,
   ],
   exports: [],
 })

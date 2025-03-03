@@ -1,16 +1,19 @@
+import { Injectable } from '@nestjs/common';
 import { SentMessageInfo } from 'nodemailer';
+import { SharedConfig } from 'src/shared';
 const nodemailer = require('nodemailer');
-
+@Injectable()
 export class EmailManager {
-  private transport = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  constructor() {}
+  private transport;
+  constructor(private sharedConfig: SharedConfig) {
+    this.transport = nodemailer.createTransport({
+      service: this.sharedConfig.getEmailService(),
+      auth: {
+        user: this.sharedConfig.getEmail(),
+        pass: this.sharedConfig.getEmailPassword(),
+      },
+    });
+  }
 
   async sendEmail(
     email: string,

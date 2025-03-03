@@ -4,17 +4,18 @@ import { JwtService } from '@nestjs/jwt';
 import { Strategy } from 'passport-local';
 
 import { AuthService } from '../auth.service';
-import { User } from '../../../types';
+import { AuthConfig } from '../config';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
+    private authConfig: AuthConfig,
   ) {
     super({
-      usernameField: process.env.USERNAME_FIELD,
-      passwordField: process.env.PASSWORD_FIELD,
+      usernameField: authConfig.getUserNameField(),
+      passwordField: authConfig.getPasswordField(),
     });
   }
 

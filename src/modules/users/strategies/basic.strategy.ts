@@ -1,17 +1,18 @@
 import { UnauthorizedException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { BasicStrategy as PassportBasicStrategy } from 'passport-http';
+import { UsersConfig } from '../config';
 
 @Injectable()
 export class BasicStrategy extends PassportStrategy(PassportBasicStrategy) {
-  constructor() {
+  constructor(private usersConfig: UsersConfig) {
     super();
   }
 
   validate(username: string, password: string): boolean {
     const isValid =
-      username === process.env.BASIC_USERNAME &&
-      password === process.env.BASIC_PASSWORD;
+      username === this.usersConfig.getAdminLogin() &&
+      password === this.usersConfig.getAdminPassword();
 
     if (!isValid) {
       throw new UnauthorizedException('Invalid credentials');

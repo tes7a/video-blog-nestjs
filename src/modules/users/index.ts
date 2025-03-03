@@ -10,6 +10,7 @@ import { User, UserSchema } from '../../schemas';
 import { UsersController } from './users.controller';
 import { BasicAuthGuard } from './guards';
 import { BasicStrategy } from './strategies';
+import { UsersConfig } from './config';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BasicStrategy } from './strategies';
     UsersService,
     UsersRepository,
     UsersQueryRepository,
+    UsersConfig,
   ],
   exports: [UsersService, UsersRepository, MongooseModule],
 })
