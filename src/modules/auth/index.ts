@@ -12,7 +12,7 @@ import { JwtAuthGuard, LocalAuthGuard } from './guards';
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users';
 import { AuthConfig } from './config';
-import { SharedConfig } from '../../shared';
+import { CoreConfig } from '../../core/core.config';
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { SharedConfig } from '../../shared';
     JwtAuthGuard,
     UsersService,
     EmailManager,
-    SharedConfig,
+    CoreConfig,
     AuthConfig,
   ],
   exports: [],

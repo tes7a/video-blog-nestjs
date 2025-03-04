@@ -13,11 +13,4 @@ export class AuthConfig {
   getJwtSecret(): string {
     return process.env.JWT_SECRET ?? 'secret';
   }
-
-  //TODO: think how to extract config for port
-  //   getPort() {
-  //     const port = process.env.PORT ?? 3000;
-
-  //     return isNaN(port) ? 3000 : Number(port);
-  //   }
 }

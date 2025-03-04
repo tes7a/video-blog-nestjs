@@ -3,9 +3,12 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './filters/exception.filter';
+import { CoreConfig } from './core';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const coreConfig = app.get<CoreConfig>(CoreConfig);
+
   app.useGlobalPipes(
     new ValidationPipe({
       stopAtFirstError: true,
@@ -28,6 +31,13 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
-  await app.listen(3000);
+
+  const port = coreConfig.port;
+
+  await app.listen(port, () => {
+    console.log('App starting listen port: ', port);
+  });
+
+  console.log();
 }
 bootstrap();

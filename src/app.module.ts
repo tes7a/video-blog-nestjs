@@ -1,8 +1,7 @@
-import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard } from '@nestjs/throttler';
+// import { APP_GUARD } from '@nestjs/core';
+// import { ThrottlerGuard } from '@nestjs/throttler';
 
 import {
   AuthModule,
@@ -12,11 +11,19 @@ import {
   UsersModule,
 } from './modules';
 import { ResetController } from './reset.controller';
+import { CoreConfig, CoreModule } from './core';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URL),
+    CoreModule,
+    MongooseModule.forRootAsync({
+      useFactory: (coreConfig: CoreConfig) => {
+        const uri = coreConfig.mongoUri;
+        console.log('DB_URI', uri);
+        return { uri };
+      },
+      inject: [CoreConfig],
+    }),
     AuthModule,
     UsersModule,
     BlogsModule,
