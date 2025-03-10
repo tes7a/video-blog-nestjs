@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 // import { ThrottlerGuard } from '@nestjs/throttler';
 
 import {
-  AuthModule,
   BlogsModule,
   CommentsModule,
   PostsModule,
@@ -24,7 +23,6 @@ import { CoreConfig, CoreModule } from './core';
       },
       inject: [CoreConfig],
     }),
-    AuthModule,
     UsersModule,
     BlogsModule,
     PostsModule,
