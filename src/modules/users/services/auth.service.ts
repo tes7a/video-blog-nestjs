@@ -3,10 +3,10 @@ import { add } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { UsersService } from './users.service';
-import { EmailManager } from '../../../managers';
-import { UsersRepository } from '../infrastructure/users.repository';
-import { CreateUserDTO } from '../../../dto';
-import { ErrorType, User } from '../../../types';
+import { EmailManager } from '../managers';
+import { UsersRepository } from '../infrastructure';
+import { CreateUserDTO } from '../dto';
+import { UserType } from '../models';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,7 @@ export class AuthService {
   async validateUser(
     loginOrEmail: string,
     password: string,
-  ): Promise<User | undefined> {
+  ): Promise<UserType | undefined> {
     const user = await this.usersService.verificationCredentials(
       loginOrEmail,
       password,
@@ -28,10 +28,6 @@ export class AuthService {
     if (!user) return undefined;
 
     return user;
-  }
-
-  async findUserById(userId: string) {
-    return await this.usersService.findUserById(userId);
   }
 
   async passwordRecover(email: string): Promise<string> {
@@ -78,7 +74,7 @@ export class AuthService {
   async registerUser(data: CreateUserDTO) {
     const confirmationCode = v4();
 
-    const result: User | string | ErrorType =
+    const result: UserType | string | ErrorType =
       await this.usersService.registerUser(data, confirmationCode);
 
     if (typeof result === 'string') throw new BadRequestException(result);

@@ -3,10 +3,9 @@ import { v4 } from 'uuid';
 import { genSalt, hash } from 'bcrypt';
 import { add } from 'date-fns';
 
-import { UsersRepository } from '../infrastructure/users.repository';
-import { CreateUserDTO } from '../../../dto';
-import { UserDBModel } from '../../../models';
-import { CreateUserOutput, ErrorType, User } from '../../../types';
+import { UsersRepository } from '../infrastructure';
+import { CreateUserDTO } from '../dto';
+import { CreateUserOutputType, UserDBModel, UserType } from '../models';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +13,7 @@ export class UsersService {
 
   async createUserByAdmin(
     data: CreateUserDTO,
-  ): Promise<CreateUserOutput | string | ErrorType> {
+  ): Promise<CreateUserOutputType | string | ErrorType> {
     const { email, login, password } = data;
     const passwordSalt = await this.genSalt();
     const passwordHash = await this._generateHash(password, passwordSalt);
@@ -51,7 +50,7 @@ export class UsersService {
   async registerUser(
     data: CreateUserDTO,
     confirmationCode: string,
-  ): Promise<User | string | ErrorType> {
+  ): Promise<UserType | string | ErrorType> {
     const { email, login, password } = data;
     const passwordSalt = await this.genSalt();
     const passwordHash = await this._generateHash(password, passwordSalt);
@@ -83,18 +82,10 @@ export class UsersService {
     return params;
   }
 
-  async findUserById(userId: string): Promise<User> {
-    return await this.usersRepository.findUserById(userId);
-  }
-
-  async deleteUser(id: string): Promise<boolean> {
-    return await this.usersRepository.deleteUser(id);
-  }
-
   async verificationCredentials(
     loginOrEmail: string,
     password: string,
-  ): Promise<undefined | User> {
+  ): Promise<undefined | UserType> {
     const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail);
 
     if (!user?.emailConfirmation?.isConfirmed) return undefined;

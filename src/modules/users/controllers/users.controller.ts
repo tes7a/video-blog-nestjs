@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { UsersQueryRepository } from '../infrastructure/query/users-query.repository';
 import { UsersService } from '../services/users.service';
 import { UserValidation } from '../validation';
 import { BasicAuthGuard } from '../guards';
-import { GetUsersDTO } from '../../../dto';
+import { UsersQueryRepository, UsersRepository } from '../infrastructure';
+import { GetUsersDTO } from '../dto';
 
 @UseGuards(BasicAuthGuard)
 @Controller('/users')
@@ -24,6 +24,7 @@ export class UsersController {
   constructor(
     private users: UsersService,
     private usersQuery: UsersQueryRepository,
+    private usersRepository: UsersRepository,
   ) {}
 
   @Get()
@@ -47,7 +48,7 @@ export class UsersController {
 
   @Delete('/:id')
   async deleteUser(@Param('id') id: string, @Res() response: Response) {
-    const data = await this.users.deleteUser(id);
+    const data = await this.usersRepository.deleteUser(id);
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }

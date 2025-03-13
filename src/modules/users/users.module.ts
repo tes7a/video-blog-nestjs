@@ -4,17 +4,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { UsersQueryRepository } from './infrastructure/query/users-query.repository';
-import { UsersRepository } from './infrastructure/users.repository';
-import { UsersService } from './services/users.service';
-import { User, UserSchema } from '../../schemas';
-import { UsersController } from './controllers/users.controller';
 import { BasicAuthGuard, JwtAuthGuard, LocalAuthGuard } from './guards';
 import { BasicStrategy, JwtStrategy, LocalStrategy } from './strategies';
 import { UsersConfig } from './config/users.config';
-import { AuthController } from './controllers/auth.controller';
-import { AuthService } from './services/auth.service';
-import { EmailManager } from 'src/managers';
+import { User, UserSchema } from './schemas';
+import { AuthController, UsersController } from './controllers';
+import { AuthService, UsersService } from './services';
+import { UsersQueryRepository, UsersRepository } from './infrastructure';
+import { EmailManager } from './managers';
 
 @Module({
   imports: [

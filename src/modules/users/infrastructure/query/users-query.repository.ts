@@ -3,15 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { map, pick } from 'lodash';
 
-import { User } from '../../../../schemas';
-import { GetUsersDTO } from '../../../../dto';
-import { GetUsersOutput } from '../../../../types';
+import { User } from '../../schemas';
+import { GetUsersDTO } from '../../dto';
+import { GetUsersOutputType } from '../../models';
 
 @Injectable()
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async getUsers(query: GetUsersDTO): Promise<GetUsersOutput | string> {
+  async getUsers(query: GetUsersDTO): Promise<GetUsersOutputType | string> {
     const {
       pageNumber = 1,
       pageSize = 10,

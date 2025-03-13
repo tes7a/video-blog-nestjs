@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
-import { User } from '../../../schemas';
-import { ErrorType, User as UserType } from '../../../types';
+import { User } from '../schemas';
+import { UserType } from '../models';
 
 @Injectable()
 export class UsersRepository {

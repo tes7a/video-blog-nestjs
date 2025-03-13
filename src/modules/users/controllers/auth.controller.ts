@@ -13,13 +13,15 @@ import {
 
 import { JwtAuthGuard, LocalAuthGuard } from '../guards';
 
-import { User } from '../../../types';
 import { CurrentUser, CurrentUserId } from '../decorators';
-import { AuthService } from '../services/auth.service';
-import { EmailValidation } from '../validation/email.validation';
-import { PasswordValidation } from '../validation/password.validation';
-import { RegistrationValidation } from '../validation/registration.validation';
-import { CodeValidation } from '../validation/code.validation';
+import { AuthService } from '../services';
+import {
+  CodeValidation,
+  EmailValidation,
+  PasswordValidation,
+  RegistrationValidation,
+} from '../validation';
+import { UserType } from '../models';
 
 @Controller('/auth')
 export class AuthController {
@@ -35,8 +37,8 @@ export class AuthController {
   @Get('/me')
   getProfile(
     @CurrentUser()
-    accountData: Pick<User, 'id'> &
-      Pick<User['accountData'], 'email' | 'login'>,
+    accountData: Pick<UserType, 'id'> &
+      Pick<UserType['accountData'], 'email' | 'login'>,
     @Res() response: Response,
   ) {
     return response.status(HttpStatus.OK).send(accountData);
