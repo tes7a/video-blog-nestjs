@@ -1,17 +1,24 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { Strategy } from 'passport-local';
 
 import { UsersConfig } from '../config/users.config';
 import { AuthService } from '../services';
+import {
+  ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+  REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+} from '../constans';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
     private authService: AuthService,
-    private jwtService: JwtService,
     userConfig: UsersConfig,
+    @Inject(ACCESS_TOKEN_STRATEGY_INJECT_TOKEN)
+    private accessTokenContext: JwtService,
+    @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
+    private refreshTokenContext: JwtService,
   ) {
     super({
       usernameField: userConfig.usernameField,
@@ -19,10 +26,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(
-    loginOrEmail: string,
-    password: string,
-  ): Promise<{ accessToken: string }> {
+  async validate(loginOrEmail: string, password: string): Promise<Tokens> {
     const user = await this.authService.validateUser(loginOrEmail, password);
 
     if (!user) {
@@ -31,8 +35,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    const accessToken = await this.jwtService.sign({ user });
+    const accessToken = await this.accessTokenContext.sign({ user });
+    const refreshToken = await this.refreshTokenContext.sign({ user });
 
-    return { accessToken };
+    return { accessToken, refreshToken };
   }
 }

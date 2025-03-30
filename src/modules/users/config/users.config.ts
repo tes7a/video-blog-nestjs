@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 import { configValidationUtility } from '../../../setup';
 
@@ -17,11 +17,6 @@ export class UsersConfig {
   passwordField: string = this.configService.get('PASSWORD_FIELD');
 
   @IsString({
-    message: 'Set Env variable JWT_SECRET, example: secret',
-  })
-  jwtSecret: string = this.configService.get('JWT_SECRET');
-
-  @IsString({
     message: 'Set Env variable BASIC_USERNAME, example: admin',
   })
   adminLogin: string = this.configService.get('BASIC_USERNAME');
@@ -32,11 +27,43 @@ export class UsersConfig {
   adminPassword: string = this.configService.get('BASIC_PASSWORD');
 
   @IsString({
+    message: 'Set Env variable ACCESS_TOKEN_SECRET, example: secret',
+  })
+  accessTokenSecret: string | Buffer = this.configService.get(
+    'ACCESS_TOKEN_SECRET',
+  );
+
+  @IsString({
     message: 'Set Env variable TOKEN_TIME_EXPIRATION, example: 5m',
   })
-  timeExpiration: string | number = this.configService.get(
-    'TOKEN_TIME_EXPIRATION',
+  accessTokenExpireIn: string | number = this.configService.get(
+    'ACCESS_TOKEN_TIME_EXPIRATION',
   );
+
+  @IsString({
+    message: 'Set Env variable REFRESH_TOKEN_SECRET, example: secret',
+  })
+  refreshTokenSecret: string | Buffer = this.configService.get(
+    'REFRESH_TOKEN_SECRET',
+  );
+
+  @IsString({
+    message: 'Set Env variable TOKEN_TIME_EXPIRATION, example: 5m',
+  })
+  refreshTokenExpireIn: string | number = this.configService.get(
+    'REFRESH_TOKEN_TIME_EXPIRATION',
+  );
+
+  @IsNumber(
+    {},
+    {
+      message:
+        'Set Env variable COOKIE_TOKEN_TIME_EXPIRATION in milliseconds, example: 60*60*1000*1 = 1 hour',
+    },
+  )
+  cookieTokenExpireIn: number =
+    +this.configService.get('COOKIE_TOKEN_TIME_EXPIRATION') ||
+    +process.env.COOKIE_TOKEN_TIME_EXPIRATION;
 
   constructor(private configService: ConfigService<any, true>) {
     configValidationUtility.validateConfig(this);

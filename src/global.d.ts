@@ -11,4 +11,11 @@ declare global {
   }
 }
 
+declare global {
+  interface Tokens {
+    accessToken: string;
+    refreshToken: string;
+  }
+}
+
 export {};

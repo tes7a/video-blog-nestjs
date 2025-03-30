@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 import { BasicAuthGuard, JwtAuthGuard, LocalAuthGuard } from './guards';
 import { BasicStrategy, JwtStrategy, LocalStrategy } from './strategies';
@@ -12,6 +11,7 @@ import { AuthController, UsersController } from './controllers';
 import { AuthService, UsersService } from './services';
 import { UsersQueryRepository, UsersRepository } from './infrastructure';
 import { EmailManager } from './managers';
+import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN, REFRESH_TOKEN_STRATEGY_INJECT_TOKEN } from './constans';
 
 @Module({
   imports: [
@@ -26,13 +26,7 @@ import { EmailManager } from './managers';
     // ]),
 
     // TODO: after need reconfigure this and split to another provider module with use cases!!!!
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get('TOKEN_TIME_EXPIRATION') },
-      }),
-      inject: [ConfigService],
-    }),
+    JwtModule,
     PassportModule,
   ],
   controllers: [UsersController, AuthController],
@@ -49,6 +43,26 @@ import { EmailManager } from './managers';
     LocalAuthGuard,
     JwtAuthGuard,
     EmailManager,
+    {
+      provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+      useFactory: (userAccountConfig: UsersConfig): JwtService => {
+        return new JwtService({
+          secret: userAccountConfig.accessTokenSecret,
+          signOptions: { expiresIn: userAccountConfig.accessTokenExpireIn },
+        });
+      },
+      inject: [UsersConfig],
+    },
+    {
+      provide: REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+      useFactory: (userAccountConfig: UsersConfig): JwtService => {
+        return new JwtService({
+          secret: userAccountConfig.refreshTokenSecret,
+          signOptions: { expiresIn: userAccountConfig.refreshTokenExpireIn },
+        });
+      },
+      inject: [UsersConfig],
+    },
   ],
   exports: [UsersService, UsersRepository, MongooseModule],
 })

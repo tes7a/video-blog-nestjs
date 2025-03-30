@@ -14,7 +14,7 @@ import {
   CommentsController,
   PostsController,
 } from './controllers';
-import { BlogsService, CommentsService, PostsService } from './services';
+import { BlogsService, PostsService } from './services';
 import {
   BlogsQueryRepository,
   BlogsRepository,
@@ -40,7 +40,6 @@ import {
     PostsService,
     PostsRepository,
     PostsQueryRepository,
-    CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
   ],

@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import { JwtService } from '@nestjs/jwt';
 import {
   BadRequestException,
   Body,
@@ -22,14 +21,27 @@ import {
   RegistrationValidation,
 } from '../validation';
 import { UserType } from '../models';
+import { UsersConfig } from '../config/users.config';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userConfig: UsersConfig,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@CurrentUserId() accessToken: string, @Res() response: Response) {
+  async login(@CurrentUserId() tokens: Tokens, @Res() response: Response) {
+    const { accessToken, refreshToken } = tokens;
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: this.userConfig.cookieTokenExpireIn,
+    });
+
     return response.status(HttpStatus.OK).send({ accessToken });
   }
 
