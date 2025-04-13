@@ -4,7 +4,7 @@ import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
 
 import { Comment } from '../../schemas';
-import { CreateCommentDTO } from '../../dto';
+import { GetCommentDTO } from '../../dto';
 import { GetCommentsOutputType } from '../../models/comment';
 import { UserRatingsType } from '../../models';
 
@@ -13,10 +13,10 @@ export class CommentsQueryRepository {
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<Comment>,
   ) {}
-
+  // TODO: посмотерть почему не приходят комменты????
   async getAllComments(payload: {
     postId: string;
-    query: CreateCommentDTO;
+    query: GetCommentDTO;
     userId?: string;
   }): Promise<GetCommentsOutputType | string> {
     const {

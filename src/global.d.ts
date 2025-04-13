@@ -1,7 +1,7 @@
 declare global {
-  interface JwtPayload {
+  interface JwtPayload<T = unknown> {
     [key: string]: unknown;
-    userId: string;
+    user: T;
   }
 }
 declare global {

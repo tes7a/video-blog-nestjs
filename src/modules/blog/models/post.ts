@@ -10,9 +10,15 @@ export interface PostType {
     likesCount: number;
     dislikesCount: number;
     myStatus: string;
+    userRatings?: Array<{
+      userId: string;
+      userRating: string;
+    }>;
     newestLikes?: Array<NewestLikesType>;
   };
 }
+
+
 
 export interface NewestLikesType {
   addedAt: string;

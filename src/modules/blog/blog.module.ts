@@ -23,6 +23,8 @@ import {
   PostsQueryRepository,
   PostsRepository,
 } from './infrastructure';
+import { BasicAuthGuard, JwtAuthGuard } from '../users/guards';
+import { UsersConfig } from '../users/config/users.config';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import {
   ],
   controllers: [BlogsController, CommentsController, PostsController],
   providers: [
+    BasicAuthGuard,
+    JwtAuthGuard,
     BlogsService,
     BlogsRepository,
     BlogsQueryRepository,
@@ -42,6 +46,7 @@ import {
     PostsQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
+    UsersConfig,
   ],
   exports: [MongooseModule],
 })

@@ -1,4 +1,4 @@
-export interface CreateCommentDTO {
+export interface GetCommentDTO {
   sortBy: string;
   sortDirection: string;
   pageNumber: string;

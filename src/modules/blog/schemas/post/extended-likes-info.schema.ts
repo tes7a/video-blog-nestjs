@@ -1,23 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { NewestLikes } from './newest-likes.schema';
+import { NewestLikes, NewestLikesSchema } from './newest-likes.schema';
 import { UserRatings, UserRatingsSchema } from './user-ratings.schema';
 
 @Schema({ _id: false })
 export class ExtendedLikesInfo {
-  @Prop()
+  @Prop({ type: Number, default: 0 })
   likesCount: number;
 
-  @Prop()
+  @Prop({ type: Number, default: 0 })
   dislikesCount: number;
 
-  @Prop()
+  @Prop({ type: String, default: 'None' })
   myStatus: string;
 
-  @Prop()
+  @Prop({ type: [NewestLikesSchema], default: [] })
   newestLikes: Array<NewestLikes>;
 
-  @Prop({ type: UserRatingsSchema })
+  @Prop({ type: [UserRatingsSchema], default: [] })
   userRatings: Array<UserRatings>;
 }
 

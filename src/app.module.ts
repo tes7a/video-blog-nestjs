@@ -13,7 +13,6 @@ import { CoreConfig, CoreModule } from './core';
     MongooseModule.forRootAsync({
       useFactory: (coreConfig: CoreConfig) => {
         const uri = coreConfig.mongoUri;
-        console.log('DB_URI', uri);
         return { uri };
       },
       inject: [CoreConfig],

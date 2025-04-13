@@ -10,7 +10,7 @@ export interface CommentType {
   likesInfo: {
     likesCount: number;
     dislikesCount: number;
-    myStatus: null | string;
+    myStatus: 'None' | 'Like' | 'Dislike';
     userRatings?: {
       userId: string;
       userRating: string;

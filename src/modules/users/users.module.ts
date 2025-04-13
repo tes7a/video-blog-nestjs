@@ -11,12 +11,16 @@ import { AuthController, UsersController } from './controllers';
 import { AuthService, UsersService } from './services';
 import { UsersQueryRepository, UsersRepository } from './infrastructure';
 import { EmailManager } from './managers';
-import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN, REFRESH_TOKEN_STRATEGY_INJECT_TOKEN } from './constans';
+import {
+  ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+  REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+} from './constans';
 
 @Module({
   imports: [
     PassportModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    JwtModule,
     // TODO: after test's will fix, need to uncommit this config
     // ThrottlerModule.forRoot([
     //   {
@@ -26,8 +30,6 @@ import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN, REFRESH_TOKEN_STRATEGY_INJECT_TOKEN
     // ]),
 
     // TODO: after need reconfigure this and split to another provider module with use cases!!!!
-    JwtModule,
-    PassportModule,
   ],
   controllers: [UsersController, AuthController],
   providers: [
@@ -64,6 +66,12 @@ import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN, REFRESH_TOKEN_STRATEGY_INJECT_TOKEN
       inject: [UsersConfig],
     },
   ],
-  exports: [UsersService, UsersRepository, MongooseModule],
+  exports: [
+    UsersService,
+    UsersRepository,
+    MongooseModule,
+    BasicAuthGuard,
+    JwtAuthGuard,
+  ],
 })
 export class UsersModule {}
