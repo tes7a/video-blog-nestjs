@@ -26,7 +26,7 @@ import {
   UpdatePostDTO,
 } from '../dto';
 import { ContentValidation, LikeStatusValidation } from '../validation';
-import { JwtAuthGuard } from '../../users/guards';
+import { BasicAuthGuard, JwtAuthGuard } from '../../users/guards';
 import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
 
@@ -64,6 +64,7 @@ export class PostsController {
     return response.status(HttpStatus.OK).send(data);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post()
   async createPost(@Body() body: CreatePostDTO, @Res() response: Response) {
     const data = await this.postsService.createPost(body);
@@ -111,6 +112,7 @@ export class PostsController {
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Put('/:id')
   async updatePost(
     @Param('id') id: string,
@@ -122,6 +124,7 @@ export class PostsController {
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Delete('/:id')
   async deletePost(@Param('id') id: string, @Res() response: Response) {
     const data = await this.postsRepository.deletePost(id);

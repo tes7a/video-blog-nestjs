@@ -13,7 +13,6 @@ export class CommentsQueryRepository {
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<Comment>,
   ) {}
-  // TODO: посмотерть почему не приходят комменты????
   async getAllComments(payload: {
     postId: string;
     query: GetCommentDTO;

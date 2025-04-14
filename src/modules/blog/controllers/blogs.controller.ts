@@ -9,11 +9,16 @@ import {
   Put,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 
 import { BlogsService, PostsService } from '../services';
-import { BlogsQueryRepository, BlogsRepository, PostsQueryRepository } from '../infrastructure';
+import {
+  BlogsQueryRepository,
+  BlogsRepository,
+  PostsQueryRepository,
+} from '../infrastructure';
 import {
   CreateBlogDTO,
   CreatePostDTO,
@@ -21,6 +26,7 @@ import {
   GetPostsDTO,
   UpdateBlogDTO,
 } from '../dto';
+import { BasicAuthGuard } from '../../users/guards';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -29,7 +35,7 @@ export class BlogsController {
     private postsService: PostsService,
     private blogsQuery: BlogsQueryRepository,
     private postsQuery: PostsQueryRepository,
-    private blogsRepository: BlogsRepository
+    private blogsRepository: BlogsRepository,
   ) {}
 
   @Get('/:id')
@@ -57,6 +63,7 @@ export class BlogsController {
     return response.status(HttpStatus.OK).send(data);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post()
   async crateBlog(@Body() body: CreateBlogDTO, @Res() response: Response) {
     const data = await this.blogsService.createBlog(body);
@@ -64,6 +71,7 @@ export class BlogsController {
     return response.status(HttpStatus.CREATED).send(data);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post('/:id/posts')
   async createPostByBlogId(
     @Param('id') id: string,
@@ -75,17 +83,22 @@ export class BlogsController {
     return response.status(HttpStatus.CREATED).send(data);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Put('/:id')
   async updateBlog(
     @Param('id') id: string,
     @Body() body: UpdateBlogDTO,
     @Res() response: Response,
   ) {
-    const data = await await this.blogsRepository.updateBlog({ id, data: body });
+    const data = await await this.blogsRepository.updateBlog({
+      id,
+      data: body,
+    });
     if (!data) return response.status(HttpStatus.NOT_FOUND).send(data);
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Delete('/:id')
   async deleteBlog(@Param('id') id: string, @Res() response: Response) {
     const data = await this.blogsRepository.deleteBlog(id);
