@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 
-import { BasicAuthGuard, JwtAuthGuard, LocalAuthGuard } from './guards';
+import {
+  BasicAuthGuard,
+  JwtAuthGuard,
+  LocalAuthGuard,
+  OptionalJwtAuthGuard,
+} from './guards';
 import { BasicStrategy, JwtStrategy, LocalStrategy } from './strategies';
 import { UsersConfig } from './config/users.config';
 import { User, UserSchema } from './schemas';
@@ -21,15 +27,12 @@ import {
     PassportModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule,
-    // TODO: after test's will fix, need to uncommit this config
-    // ThrottlerModule.forRoot([
-    //   {
-    //     ttl: 5000,
-    //     limit: 5,
-    //   },
-    // ]),
-
-    // TODO: after need reconfigure this and split to another provider module with use cases!!!!
+    ThrottlerModule.forRoot([
+      {
+        ttl: 5000,
+        limit: 5,
+      },
+    ]),
   ],
   controllers: [UsersController, AuthController],
   providers: [
@@ -44,6 +47,7 @@ import {
     JwtStrategy,
     LocalAuthGuard,
     JwtAuthGuard,
+    OptionalJwtAuthGuard,
     EmailManager,
     {
       provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
@@ -72,6 +76,7 @@ import {
     MongooseModule,
     BasicAuthGuard,
     JwtAuthGuard,
+    OptionalJwtAuthGuard,
   ],
 })
 export class UsersModule {}

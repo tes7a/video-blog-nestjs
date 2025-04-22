@@ -26,7 +26,11 @@ import {
   UpdatePostDTO,
 } from '../dto';
 import { ContentValidation, LikeStatusValidation } from '../validation';
-import { BasicAuthGuard, JwtAuthGuard } from '../../users/guards';
+import {
+  BasicAuthGuard,
+  JwtAuthGuard,
+  OptionalJwtAuthGuard,
+} from '../../users/guards';
 import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
 
@@ -46,20 +50,36 @@ export class PostsController {
     return response.status(HttpStatus.OK).send(data);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('/:id/comments')
   async getCommentsByPostId(
     @Param('id') id: string,
+    @CurrentUser()
+    user: Pick<UserType, 'id'>,
     @Query() query: GetCommentDTO,
     @Res() response: Response,
   ) {
-    const data = await this.commentsQuery.getAllComments({ query, postId: id });
+    const data = await this.commentsQuery.getAllComments({
+      query,
+      postId: id,
+      userId: user.id,
+    });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get()
-  async getAllPosts(@Query() query: GetPostsDTO, @Res() response: Response) {
-    const data = await this.postsQuery.getAllPosts({ query });
+  async getAllPosts(
+    @CurrentUser()
+    user: Pick<UserType, 'id'>,
+    @Query() query: GetPostsDTO,
+    @Res() response: Response,
+  ) {
+    const data = await this.postsQuery.getAllPosts({
+      query,
+      userId: user.id,
+    });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

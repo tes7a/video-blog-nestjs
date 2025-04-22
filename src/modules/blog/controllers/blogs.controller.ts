@@ -26,7 +26,9 @@ import {
   GetPostsDTO,
   UpdateBlogDTO,
 } from '../dto';
-import { BasicAuthGuard } from '../../users/guards';
+import { BasicAuthGuard, OptionalJwtAuthGuard } from '../../users/guards';
+import { CurrentUser } from '../../users/decorators';
+import { UserType } from '../../users/models';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -45,13 +47,21 @@ export class BlogsController {
     return response.status(HttpStatus.OK).send(data);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('/:id/posts')
   async getPostsByBlogId(
     @Param('id') id: string,
+    @CurrentUser()
+    @CurrentUser()
+    user: Pick<UserType, 'id'>,
     @Query() query: GetPostsDTO,
     @Res() response: Response,
   ) {
-    const data = await this.postsQuery.getAllPosts({ query, blogId: id });
+    const data = await this.postsQuery.getAllPosts({
+      query,
+      blogId: id,
+      userId: user.id,
+    });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

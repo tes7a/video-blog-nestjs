@@ -9,9 +9,9 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 
 import { JwtAuthGuard, LocalAuthGuard } from '../guards';
-
 import { CurrentUser, CurrentUserId } from '../decorators';
 import { AuthService } from '../services';
 import {
@@ -30,6 +30,7 @@ export class AuthController {
     private userConfig: UsersConfig,
   ) {}
 
+  @SkipThrottle()
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   async login(@CurrentUserId() tokens: Tokens, @Res() response: Response) {
@@ -45,6 +46,7 @@ export class AuthController {
     return response.status(HttpStatus.OK).send({ accessToken });
   }
 
+  @SkipThrottle()
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   getProfile(
