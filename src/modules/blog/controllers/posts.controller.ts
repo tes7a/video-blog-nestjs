@@ -19,13 +19,12 @@ import {
   PostsQueryRepository,
   PostsRepository,
 } from '../infrastructure';
+import { GetCommentDTO, GetPostsDTO } from '../dto';
 import {
-  GetCommentDTO,
-  CreatePostDTO,
-  GetPostsDTO,
-  UpdatePostDTO,
-} from '../dto';
-import { ContentValidation, LikeStatusValidation } from '../validation';
+  ContentValidation,
+  LikeStatusValidation,
+  PostValidation,
+} from '../validation';
 import {
   BasicAuthGuard,
   JwtAuthGuard,
@@ -86,7 +85,7 @@ export class PostsController {
 
   @UseGuards(BasicAuthGuard)
   @Post()
-  async createPost(@Body() body: CreatePostDTO, @Res() response: Response) {
+  async createPost(@Body() body: PostValidation, @Res() response: Response) {
     const data = await this.postsService.createPost(body);
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.CREATED).send(data);
@@ -136,7 +135,7 @@ export class PostsController {
   @Put('/:id')
   async updatePost(
     @Param('id') id: string,
-    @Body() body: UpdatePostDTO,
+    @Body() body: PostValidation,
     @Res() response: Response,
   ) {
     const data = await this.postsRepository.updatePost({ id, body });

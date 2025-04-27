@@ -19,14 +19,9 @@ import {
   BlogsRepository,
   PostsQueryRepository,
 } from '../infrastructure';
-import {
-  CreateBlogDTO,
-  CreatePostDTO,
-  GetBlogsDTO,
-  GetPostsDTO,
-  UpdateBlogDTO,
-} from '../dto';
+import { GetBlogsDTO, GetPostsDTO } from '../dto';
 import { BasicAuthGuard, OptionalJwtAuthGuard } from '../../users/guards';
+import { BlogValidation, PostByIdValidation } from '../validation';
 import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
 
@@ -75,7 +70,7 @@ export class BlogsController {
 
   @UseGuards(BasicAuthGuard)
   @Post()
-  async crateBlog(@Body() body: CreateBlogDTO, @Res() response: Response) {
+  async crateBlog(@Body() body: BlogValidation, @Res() response: Response) {
     const data = await this.blogsService.createBlog(body);
     if (!data) return response.status(HttpStatus.NOT_FOUND).send(data);
     return response.status(HttpStatus.CREATED).send(data);
@@ -85,7 +80,7 @@ export class BlogsController {
   @Post('/:id/posts')
   async createPostByBlogId(
     @Param('id') id: string,
-    @Body() body: Omit<CreatePostDTO, 'blogId'>,
+    @Body() body: Omit<PostByIdValidation, 'blogId'>,
     @Res() response: Response,
   ) {
     const data = await this.postsService.createPost({ ...body, blogId: id });
@@ -97,7 +92,7 @@ export class BlogsController {
   @Put('/:id')
   async updateBlog(
     @Param('id') id: string,
-    @Body() body: UpdateBlogDTO,
+    @Body() body: BlogValidation,
     @Res() response: Response,
   ) {
     const data = await await this.blogsRepository.updateBlog({
