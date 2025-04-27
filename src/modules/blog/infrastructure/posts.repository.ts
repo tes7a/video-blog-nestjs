@@ -16,13 +16,14 @@ export class PostsRepository {
 
     if (!post) return undefined;
 
-    return { ...omit(post, ['_id', '__v']) };
+    return { ...omit(post, ['_id', '__v', 'extendedLikesInfo.userRatings']) };
   }
 
   async createPost(payload: PostType): Promise<PostType | string> {
     try {
       await this.postModel.create(payload);
-      return payload;
+
+      return { ...omit(payload, ['extendedLikesInfo.userRatings']) };
     } catch (e) {
       if (e instanceof MongooseError) {
         return e.message;

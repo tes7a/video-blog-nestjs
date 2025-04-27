@@ -26,6 +26,7 @@ export class CommentsRepository {
 
   async createComment(newComment: CommentType): Promise<GetCommentOutputType> {
     await this.commentModel.create(newComment);
+    
     return { ...omit(newComment, ['_id', '__v', 'postId', 'userRatings']) };
   }
 

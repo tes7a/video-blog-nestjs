@@ -19,7 +19,7 @@ import { EmailManager } from './managers';
 import {
   ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
   REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
-} from './constans';
+} from './constants';
 
 @Module({
   imports: [

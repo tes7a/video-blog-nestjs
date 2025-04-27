@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -5,6 +6,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  NotContains,
 } from 'class-validator';
 
 export class UserValidation {
@@ -14,17 +16,23 @@ export class UserValidation {
     message:
       'Username must start with a letter and contain only letters and numbers',
   })
+  @NotContains(' ')
+  @Transform(({ value }) => value?.trim())
   @IsNotEmpty()
   @IsString()
   login: string;
 
   @IsNotEmpty()
   @IsEmail()
+  @NotContains(' ')
+  @Transform(({ value }) => value?.trim())
   email: string;
 
   @MinLength(6)
   @MaxLength(20)
   @IsNotEmpty()
   @IsString()
+  @NotContains(' ')
+  @Transform(({ value }) => value?.trim())
   password: string;
 }

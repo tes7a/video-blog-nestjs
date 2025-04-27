@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -53,15 +54,17 @@ export class PostsController {
   @Get('/:id/comments')
   async getCommentsByPostId(
     @Param('id') id: string,
-    @CurrentUser()
-    user: Pick<UserType, 'id'>,
+    @Req()
+    req: Request & {
+      user?: UserType;
+    },
     @Query() query: GetCommentDTO,
     @Res() response: Response,
   ) {
     const data = await this.commentsQuery.getAllComments({
       query,
       postId: id,
-      userId: user.id,
+      userId: req.user?.id ?? null,
     });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
@@ -70,14 +73,16 @@ export class PostsController {
   @UseGuards(OptionalJwtAuthGuard)
   @Get()
   async getAllPosts(
-    @CurrentUser()
-    user: Pick<UserType, 'id'>,
+    @Req()
+    req: Request & {
+      user?: UserType;
+    },
     @Query() query: GetPostsDTO,
     @Res() response: Response,
   ) {
     const data = await this.postsQuery.getAllPosts({
       query,
-      userId: user.id,
+      userId: req.user?.id ?? null,
     });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);

@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -22,7 +23,6 @@ import {
 import { GetBlogsDTO, GetPostsDTO } from '../dto';
 import { BasicAuthGuard, OptionalJwtAuthGuard } from '../../users/guards';
 import { BlogValidation, PostByIdValidation } from '../validation';
-import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
 
 @Controller('/blogs')
@@ -46,16 +46,17 @@ export class BlogsController {
   @Get('/:id/posts')
   async getPostsByBlogId(
     @Param('id') id: string,
-    @CurrentUser()
-    @CurrentUser()
-    user: Pick<UserType, 'id'>,
+    @Req()
+    req: Request & {
+      user?: UserType;
+    },
     @Query() query: GetPostsDTO,
     @Res() response: Response,
   ) {
     const data = await this.postsQuery.getAllPosts({
       query,
       blogId: id,
-      userId: user.id,
+      userId: req.user?.id ?? null,
     });
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
@@ -80,7 +81,7 @@ export class BlogsController {
   @Post('/:id/posts')
   async createPostByBlogId(
     @Param('id') id: string,
-    @Body() body: Omit<PostByIdValidation, 'blogId'>,
+    @Body() body: PostByIdValidation,
     @Res() response: Response,
   ) {
     const data = await this.postsService.createPost({ ...body, blogId: id });
