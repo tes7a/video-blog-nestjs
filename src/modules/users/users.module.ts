@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -27,12 +26,6 @@ import {
     PassportModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 5000,
-        limit: 5,
-      },
-    ]),
   ],
   controllers: [UsersController, AuthController],
   providers: [

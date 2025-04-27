@@ -10,7 +10,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { UsersService } from '../services/users.service';
@@ -19,7 +18,6 @@ import { BasicAuthGuard } from '../guards';
 import { UsersQueryRepository, UsersRepository } from '../infrastructure';
 import { GetUsersDTO } from '../dto';
 
-@SkipThrottle()
 @UseGuards(BasicAuthGuard)
 @Controller('/users')
 export class UsersController {
