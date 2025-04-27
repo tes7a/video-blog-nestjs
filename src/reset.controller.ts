@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { Model } from 'mongoose';
 
 import { User } from './modules/users/schemas';
-import { Blog, Post } from './modules/blog/schemas';
+import { Blog, Comment, Post } from './modules/blog/schemas';
 
 @Controller('/testing')
 export class ResetController {
@@ -12,7 +12,7 @@ export class ResetController {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
     @InjectModel(Post.name) private postModel: Model<Post>,
-    @InjectModel(Post.name) private commentModel: Model<Comment>,
+    @InjectModel(Comment.name) private commentModel: Model<Comment>,
   ) {}
 
   @Delete('/all-data')
