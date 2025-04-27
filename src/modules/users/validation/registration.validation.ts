@@ -6,7 +6,6 @@ import {
   Matches,
   MaxLength,
   MinLength,
-  NotContains,
 } from 'class-validator';
 
 export class RegistrationValidation {
@@ -14,7 +13,6 @@ export class RegistrationValidation {
   @MaxLength(10)
   @IsString()
   @IsNotEmpty()
-  @NotContains(' ')
   @Transform(({ value }) => value?.trim())
   @Matches('[a-zA-Z0-9_-]*$', undefined, {
     message:
@@ -24,7 +22,6 @@ export class RegistrationValidation {
 
   @MinLength(6)
   @MaxLength(20)
-  @NotContains(' ')
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty()
@@ -32,7 +29,6 @@ export class RegistrationValidation {
 
   @IsEmail()
   @IsString()
-  @NotContains(' ')
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty()
   email: string;
