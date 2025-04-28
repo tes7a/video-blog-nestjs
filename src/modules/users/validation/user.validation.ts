@@ -9,7 +9,6 @@ import {
 } from 'class-validator';
 
 export class UserValidation {
-  //testcomment
   @MinLength(3)
   @MaxLength(10)
   @Matches('[a-zA-Z0-9_-]*$', undefined, {
