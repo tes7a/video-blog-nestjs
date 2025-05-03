@@ -6,13 +6,14 @@ import {
   HttpStatus,
   Param,
   Put,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 
 import { CommentsRepository } from '../infrastructure';
-import { JwtAuthGuard } from '../../users/guards';
+import { JwtAuthGuard, OptionalJwtAuthGuard } from '../../users/guards';
 import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
 import { ContentValidation, LikeStatusValidation } from '../validation';
@@ -21,9 +22,20 @@ import { ContentValidation, LikeStatusValidation } from '../validation';
 export class CommentsController {
   constructor(private commentsRepository: CommentsRepository) {}
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('/:id')
-  async getCommentById(@Param('id') id: string, @Res() response: Response) {
-    const data = await this.commentsRepository.geCommentById(id);
+  async getCommentById(
+    @Req()
+    req: Request & {
+      user?: UserType;
+    },
+    @Param('id') id: string,
+    @Res() response: Response,
+  ) {
+    const data = await this.commentsRepository.geCommentById(
+      id,
+      req.user?.id ?? null,
+    );
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

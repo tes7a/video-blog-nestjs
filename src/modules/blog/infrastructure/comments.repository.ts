@@ -16,18 +16,47 @@ export class CommentsRepository {
     @InjectModel(Comment.name) private commentModel: Model<Comment>,
   ) {}
 
-  async geCommentById(id: string): Promise<GetCommentOutputType | undefined> {
+  async geCommentById(
+    id: string,
+    userId?: string,
+  ): Promise<GetCommentOutputType | undefined> {
     const comment = await this.commentModel.findOne({ id }).lean();
 
     if (!comment) return undefined;
 
-    return { ...omit(comment, ['_id', '__v', 'postId', 'userRatings']) };
+    let myStatus: 'None' | 'Like' | 'Dislike' = 'None';
+
+    if (userId && comment.likesInfo.userRatings?.length) {
+      const userRatingEntry = comment.likesInfo.userRatings.find(
+        (ur) => ur.userId === userId,
+      );
+      if (userRatingEntry) {
+        myStatus = userRatingEntry.userRating as 'Like' | 'Dislike';
+      }
+    }
+
+    const cleanedComment = omit(comment, [
+      '_id',
+      '__v',
+      'postId',
+      'likesInfo.userRatings',
+    ]);
+
+    return {
+      ...cleanedComment,
+      likesInfo: {
+        ...cleanedComment.likesInfo,
+        myStatus,
+      },
+    };
   }
 
   async createComment(newComment: CommentType): Promise<GetCommentOutputType> {
     await this.commentModel.create(newComment);
-    
-    return { ...omit(newComment, ['_id', '__v', 'postId', 'userRatings']) };
+
+    return {
+      ...omit(newComment, ['_id', '__v', 'postId', 'likesInfo.userRatings']),
+    };
   }
 
   async updateComment(params: {
@@ -37,12 +66,16 @@ export class CommentsRepository {
   }): Promise<void> {
     const { id, userId, content } = params;
     const comment = await this.commentModel.findOne({ id });
+
+    if (!comment) throw new NotFoundException();
+
     if (comment.commentatorInfo.userId !== userId)
       throw new ForbiddenException();
-    if (!comment) throw new NotFoundException();
+
     comment.content = content;
     await comment.save();
   }
+
   async updateLikeStatus(params: {
     id: string;
     userId: string;
