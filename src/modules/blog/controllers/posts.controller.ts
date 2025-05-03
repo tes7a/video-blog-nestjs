@@ -117,6 +117,10 @@ export class PostsController {
     @Body() body: ContentValidation,
     @Res() response: Response,
   ) {
+    const post = await this.postsRepository.getPostById(id);
+
+    if (!post) return response.sendStatus(HttpStatus.NOT_FOUND);
+
     const data = await this.postsService.createComment({
       ...body,
       postId: id,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, MongooseError } from 'mongoose';
 import { omit } from 'lodash';
@@ -78,7 +78,7 @@ export class UsersRepository {
       .lean<UserType>()
       .exec();
 
-    if (!user) throw new Error('User not found.');
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
     return {
       ...omit(user, '_id', '__v'),
