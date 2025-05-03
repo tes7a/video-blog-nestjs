@@ -72,6 +72,10 @@ export class PostsController {
     @Query() query: GetCommentDTO,
     @Res() response: Response,
   ) {
+    const post = await this.postsRepository.getPostById(id);
+
+    if (!post) return response.sendStatus(HttpStatus.NOT_FOUND);
+
     const data = await this.commentsQuery.getAllComments({
       query,
       postId: id,

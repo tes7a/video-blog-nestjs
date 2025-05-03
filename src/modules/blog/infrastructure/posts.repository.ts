@@ -40,6 +40,9 @@ export class PostsRepository {
       ...cleanedPost,
       extendedLikesInfo: {
         ...cleanedPost.extendedLikesInfo,
+        newestLikes: post.extendedLikesInfo.newestLikes.map((like) =>
+          omit(like, '_id'),
+        ),
         myStatus,
       },
     };
