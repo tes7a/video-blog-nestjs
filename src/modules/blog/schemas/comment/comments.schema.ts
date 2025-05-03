@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-import { ExtendedLikesInfoSchema } from '../post/extended-likes-info.schema';
 import {
   CommentatorInfo,
   CommentatorInfoSchema,
@@ -30,7 +29,7 @@ export class Comment {
   @Prop({ type: CommentatorInfoSchema })
   commentatorInfo: CommentatorInfo;
 
-  @Prop({ type: ExtendedLikesInfoSchema })
+  @Prop({ type: CommentExtendedLikesInfo })
   likesInfo: CommentExtendedLikesInfo;
 }
 

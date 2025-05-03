@@ -43,9 +43,20 @@ export class PostsController {
     private commentsQuery: CommentsQueryRepository,
   ) {}
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('/:id')
-  async getPostById(@Param('id') id: string, @Res() response: Response) {
-    const data = await this.postsRepository.getPostById(id);
+  async getPostById(
+    @Req()
+    req: Request & {
+      user?: UserType;
+    },
+    @Param('id') id: string,
+    @Res() response: Response,
+  ) {
+    const data = await this.postsRepository.getPostById(
+      id,
+      req.user?.id ?? null,
+    );
     if (!data) return response.sendStatus(HttpStatus.NOT_FOUND);
     return response.status(HttpStatus.OK).send(data);
   }

@@ -11,12 +11,38 @@ import { PostType } from '../models';
 export class PostsRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
-  async getPostById(id: string): Promise<PostType | undefined> {
+  async getPostById(
+    id: string,
+    userId?: string,
+  ): Promise<PostType | undefined> {
     const post = await this.postModel.findOne({ id }).lean();
 
     if (!post) return undefined;
 
-    return { ...omit(post, ['_id', '__v', 'extendedLikesInfo.userRatings']) };
+    let myStatus: 'None' | 'Like' | 'Dislike' = 'None';
+
+    if (userId && post.extendedLikesInfo.userRatings?.length) {
+      const userRatingEntry = post.extendedLikesInfo.userRatings.find(
+        (ur) => ur.userId === userId,
+      );
+      if (userRatingEntry) {
+        myStatus = userRatingEntry.userRating as 'Like' | 'Dislike';
+      }
+    }
+
+    const cleanedPost = omit(post, [
+      '_id',
+      '__v',
+      'extendedLikesInfo.userRatings',
+    ]);
+
+    return {
+      ...cleanedPost,
+      extendedLikesInfo: {
+        ...cleanedPost.extendedLikesInfo,
+        myStatus,
+      },
+    };
   }
 
   async createPost(payload: PostType): Promise<PostType | string> {

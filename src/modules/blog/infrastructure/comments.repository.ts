@@ -40,6 +40,7 @@ export class CommentsRepository {
       '__v',
       'postId',
       'likesInfo.userRatings',
+      'commentatorInfo._id',
     ]);
 
     return {
