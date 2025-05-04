@@ -93,16 +93,13 @@ export class PostsQueryRepository {
   _getNewestLikes(newestLikes: Array<NewestLikesType>, userId?: string) {
     if (!newestLikes || !newestLikes.length) return [];
 
-    return (
-      newestLikes
-        // .filter((like) => like.userId === userId)
-        .map((like) => ({
-          addedAt: like.addedAt,
-          userId: like.userId,
-          login: like.login,
-        }))
-        .slice(0, 3)
-    );
+    return newestLikes
+      .map((like) => ({
+        addedAt: like.addedAt,
+        userId: like.userId,
+        login: like.login,
+      }))
+      .slice(0, 3);
   }
 
   async _checkBlogExists(id: string): Promise<void> {
