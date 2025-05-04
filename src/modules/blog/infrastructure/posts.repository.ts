@@ -19,16 +19,12 @@ export class PostsRepository {
 
     if (!post) return undefined;
 
-    let myStatus: 'None' | 'Like' | 'Dislike' = 'None';
+    const { extendedLikesInfo } = post;
+    const userRatings = extendedLikesInfo?.userRatings ?? [];
+    const newestLikes = extendedLikesInfo?.newestLikes ?? [];
 
-    if (userId && post.extendedLikesInfo.userRatings?.length) {
-      const userRatingEntry = post.extendedLikesInfo.userRatings.find(
-        (ur) => ur.userId === userId,
-      );
-      if (userRatingEntry) {
-        myStatus = userRatingEntry.userRating as 'Like' | 'Dislike';
-      }
-    }
+    const userRatingEntry = userRatings.find((ur) => ur.userId === userId);
+    const myStatus = userRatingEntry?.userRating ?? 'None';
 
     const cleanedPost = omit(post, [
       '_id',
@@ -36,13 +32,16 @@ export class PostsRepository {
       'extendedLikesInfo.userRatings',
     ]);
 
+    const topNewestLikes = newestLikes
+      .filter((like) => like.userId !== userId)
+      .slice(0, 3)
+      .map(({ addedAt, userId, login }) => ({ addedAt, userId, login }));
+
     return {
       ...cleanedPost,
       extendedLikesInfo: {
         ...cleanedPost.extendedLikesInfo,
-        newestLikes: post.extendedLikesInfo.newestLikes.map((like) =>
-          omit(like, '_id'),
-        ),
+        newestLikes: topNewestLikes,
         myStatus,
       },
     };

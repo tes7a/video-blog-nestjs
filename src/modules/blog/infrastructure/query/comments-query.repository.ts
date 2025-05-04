@@ -29,8 +29,6 @@ export class CommentsQueryRepository {
       },
     } = payload;
 
-    
-
     try {
       const filterCondition = {
         postId: { $regex: postId ?? '' },
@@ -52,7 +50,7 @@ export class CommentsQueryRepository {
 
       const items = filteredArray.map((comment) => {
         return {
-          ...omit(comment, '_id', '__v'),
+          ...omit(comment, '_id', '__v', 'postId'),
           likesInfo: {
             dislikesCount: comment.likesInfo.dislikesCount,
             likesCount: comment.likesInfo.likesCount,
