@@ -12,7 +12,7 @@ export class CommentExtendedLikesInfo {
   @Prop()
   myStatus: 'None' | 'Like' | 'Dislike';
 
-  @Prop({ type: UserRatingsSchema })
+  @Prop({ type: [UserRatingsSchema] })
   userRatings?: Array<UserRatings>;
 }
 
