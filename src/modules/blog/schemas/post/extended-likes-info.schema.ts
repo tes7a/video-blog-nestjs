@@ -14,10 +14,10 @@ export class ExtendedLikesInfo {
   @Prop({ type: String, default: 'None' })
   myStatus: string;
 
-  @Prop({ type: [NewestLikesSchema], default: [] })
+  @Prop({ type: [NewestLikesSchema], default: [], _id: false })
   newestLikes: Array<NewestLikes>;
 
-  @Prop({ type: [UserRatingsSchema], default: [] })
+  @Prop({ type: [UserRatingsSchema], default: [], _id: false })
   userRatings: Array<UserRatings>;
 }
 

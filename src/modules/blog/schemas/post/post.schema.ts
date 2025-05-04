@@ -34,7 +34,7 @@ export class Post {
   @Prop()
   createdAt: string;
 
-  @Prop({ type: ExtendedLikesInfoSchema })
+  @Prop({ type: ExtendedLikesInfoSchema, _id: false })
   extendedLikesInfo: ExtendedLikesInfo;
 }
 

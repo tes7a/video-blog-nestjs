@@ -29,10 +29,10 @@ export class Comment {
   @Prop()
   createdAt: string;
 
-  @Prop({ type: CommentatorInfoSchema })
+  @Prop({ type: CommentatorInfoSchema, _id: false })
   commentatorInfo: CommentatorInfo;
 
-  @Prop({ type: CommentExtendedLikesInfoSchema })
+  @Prop({ type: CommentExtendedLikesInfoSchema, _id: false })
   likesInfo: CommentExtendedLikesInfo;
 }
 
