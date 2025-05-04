@@ -1,6 +1,7 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRatings, UserRatingsSchema } from '../post/user-ratings.schema';
 
+@Schema()
 export class CommentExtendedLikesInfo {
   @Prop()
   likesCount: number;
@@ -9,7 +10,7 @@ export class CommentExtendedLikesInfo {
   dislikesCount: number;
 
   @Prop()
-  myStatus: string;
+  myStatus: 'None' | 'Like' | 'Dislike';
 
   @Prop({ type: UserRatingsSchema })
   userRatings?: Array<UserRatings>;

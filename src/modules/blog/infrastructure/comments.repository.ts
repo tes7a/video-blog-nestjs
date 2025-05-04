@@ -85,6 +85,7 @@ export class CommentsRepository {
     const { id, userId, likeStatus } = params;
 
     const comment = await this.commentModel.findOne({ id });
+
     if (!comment) throw new NotFoundException();
 
     const likesInfo = comment.likesInfo;
