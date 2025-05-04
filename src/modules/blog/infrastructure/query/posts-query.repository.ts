@@ -65,6 +65,7 @@ export class PostsQueryRepository {
             ),
             newestLikes: this._getNewestLikes(
               post.extendedLikesInfo.newestLikes,
+              userId,
             ),
           },
         };
@@ -89,18 +90,18 @@ export class PostsQueryRepository {
     return userRating ? userRating.userRating : 'None';
   }
 
-  _getNewestLikes(newestLikes: Array<NewestLikesType> = []) {
+  _getNewestLikes(newestLikes: Array<NewestLikesType>, userId?: string) {
+    if (!newestLikes || !newestLikes.length) return [];
     return newestLikes
-      .sort(
-        (a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime(),
-      )
-      .slice(0, 3)
-      .map(({ addedAt, userId, login }) => ({
-        addedAt,
-        userId,
-        login,
-      }));
+      .filter((like) => like.userId === userId)
+      .map((like) => ({
+        addedAt: like.addedAt,
+        userId: like.userId,
+        login: like.login,
+      }))
+      .slice(0, 3);
   }
+
   async _checkBlogExists(id: string): Promise<void> {
     const blog = await this.blogModel.findOne({ id });
     if (!blog) {

@@ -34,8 +34,8 @@ export class PostsRepository {
 
     const topNewestLikes = newestLikes
       .filter((like) => like.userId !== userId)
-      .slice(0, 3)
-      .map(({ addedAt, userId, login }) => ({ addedAt, userId, login }));
+      .map(({ addedAt, userId, login }) => ({ addedAt, userId, login }))
+      .slice(0, 3);
 
     return {
       ...cleanedPost,
