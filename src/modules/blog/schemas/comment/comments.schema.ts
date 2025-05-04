@@ -5,7 +5,10 @@ import {
   CommentatorInfo,
   CommentatorInfoSchema,
 } from './commentator-info.schema';
-import { CommentExtendedLikesInfo } from './comment-extendedLikesInfo';
+import {
+  CommentExtendedLikesInfo,
+  CommentExtendedLikesInfoSchema,
+} from './comment-extendedLikesInfo';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
@@ -29,7 +32,7 @@ export class Comment {
   @Prop({ type: CommentatorInfoSchema })
   commentatorInfo: CommentatorInfo;
 
-  @Prop({ type: CommentExtendedLikesInfo })
+  @Prop({ type: CommentExtendedLikesInfoSchema })
   likesInfo: CommentExtendedLikesInfo;
 }
 

@@ -16,6 +16,6 @@ export class CommentExtendedLikesInfo {
   userRatings?: Array<UserRatings>;
 }
 
-export const ExtendedLikesInfoSchema = SchemaFactory.createForClass(
+export const CommentExtendedLikesInfoSchema = SchemaFactory.createForClass(
   CommentExtendedLikesInfo,
 );
