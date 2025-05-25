@@ -65,6 +65,13 @@ export class UsersConfig {
     +this.configService.get('COOKIE_TOKEN_TIME_EXPIRATION') ||
     +process.env.COOKIE_TOKEN_TIME_EXPIRATION;
 
+  @IsString({
+    message: 'Set Env variable REFRESHED_ACCESS_TOKEN_TIME, example: 10s/1h/1d',
+  })
+  refreshedAccessTokenTime: string = this.configService.get(
+    'REFRESHED_ACCESS_TOKEN_TIME',
+  );
+
   constructor(private configService: ConfigService<any, true>) {
     configValidationUtility.validateConfig(this);
   }

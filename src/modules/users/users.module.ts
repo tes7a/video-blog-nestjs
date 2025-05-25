@@ -6,10 +6,16 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import {
   BasicAuthGuard,
   JwtAuthGuard,
+  JwtRefreshGuard,
   LocalAuthGuard,
   OptionalJwtAuthGuard,
 } from './guards';
-import { BasicStrategy, JwtStrategy, LocalStrategy } from './strategies';
+import {
+  BasicStrategy,
+  JwtRefreshStrategy,
+  JwtStrategy,
+  LocalStrategy,
+} from './strategies';
 import { UsersConfig } from './config/users.config';
 import { User, UserSchema } from './schemas';
 import { AuthController, UsersController } from './controllers';
@@ -24,6 +30,7 @@ import {
 @Module({
   imports: [
     PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt-refresh' }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule,
   ],
@@ -42,6 +49,8 @@ import {
     JwtAuthGuard,
     OptionalJwtAuthGuard,
     EmailManager,
+    JwtRefreshGuard,
+    JwtRefreshStrategy,
     {
       provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
       useFactory: (userAccountConfig: UsersConfig): JwtService => {

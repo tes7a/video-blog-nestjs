@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
-import { JwtAuthGuard, LocalAuthGuard } from '../guards';
+import { JwtAuthGuard, JwtRefreshGuard, LocalAuthGuard } from '../guards';
 import { CurrentUser, CurrentUserId } from '../decorators';
 import { AuthService } from '../services';
 import {
@@ -101,6 +101,24 @@ export class AuthController {
     const errors = await this.authService.confirmCode(body.code);
     if (errors) throw new BadRequestException(errors);
     return response.sendStatus(HttpStatus.NO_CONTENT);
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Post('/refresh-token')
+  async refreshToken(
+    @CurrentUserId() tokens: Tokens,
+    @Res() response: Response,
+  ) {
+    const { accessToken, refreshToken } = tokens;
+    
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: this.userConfig.cookieTokenExpireIn,
+    });
+
+    return response.status(HttpStatus.OK).send({ accessToken });
   }
 
   @Throttle({ default: { limit: 5, ttl: 5000 } })
