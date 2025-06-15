@@ -2,6 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { Strategy } from 'passport-local';
+import { v4 } from 'uuid';
 
 import { UsersConfig } from '../config/users.config';
 import { AuthService } from '../services';
@@ -26,7 +27,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(loginOrEmail: string, password: string): Promise<Tokens> {
+  async validate(
+    loginOrEmail: string,
+    password: string,
+  ): Promise<{ id: string; deviceId: string } & Tokens> {
     const user = await this.authService.validateUser(loginOrEmail, password);
 
     if (!user) {
@@ -35,9 +39,12 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    const accessToken = await this.accessTokenContext.sign({ user });
-    const refreshToken = await this.refreshTokenContext.sign({ user });
+    const deviceId = v4();
+    const payload = { user, deviceId };
 
-    return { accessToken, refreshToken };
+    const accessToken = await this.accessTokenContext.sign(payload);
+    const refreshToken = await this.refreshTokenContext.sign(payload);
+
+    return { id: user.id, accessToken, refreshToken, deviceId };
   }
 }

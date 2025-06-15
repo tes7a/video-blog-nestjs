@@ -8,6 +8,7 @@ import {
   JwtAuthGuard,
   JwtRefreshGuard,
   LocalAuthGuard,
+  LoginDeviceGuard,
   OptionalJwtAuthGuard,
 } from './guards';
 import {
@@ -17,10 +18,18 @@ import {
   LocalStrategy,
 } from './strategies';
 import { UsersConfig } from './config/users.config';
-import { User, UserSchema } from './schemas';
-import { AuthController, UsersController } from './controllers';
+import { Device, DeviceSchema, User, UserSchema } from './schemas';
+import {
+  AuthController,
+  SecurityController,
+  UsersController,
+} from './controllers';
 import { AuthService, UsersService } from './services';
-import { UsersQueryRepository, UsersRepository } from './infrastructure';
+import {
+  DeviceRepository,
+  UsersQueryRepository,
+  UsersRepository,
+} from './infrastructure';
 import { EmailManager } from './managers';
 import {
   ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
@@ -31,10 +40,13 @@ import {
   imports: [
     PassportModule,
     PassportModule.register({ defaultStrategy: 'jwt-refresh' }),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Device.name, schema: DeviceSchema },
+    ]),
     JwtModule,
   ],
-  controllers: [UsersController, AuthController],
+  controllers: [UsersController, AuthController, SecurityController],
   providers: [
     BasicAuthGuard,
     BasicStrategy,
@@ -48,6 +60,8 @@ import {
     LocalAuthGuard,
     JwtAuthGuard,
     OptionalJwtAuthGuard,
+    LoginDeviceGuard,
+    DeviceRepository,
     EmailManager,
     JwtRefreshGuard,
     JwtRefreshStrategy,

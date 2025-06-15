@@ -1,2 +1,2 @@
-export * from './user-id.decorator';
+export * from './tokens.decorator';
 export * from './user-data.decorator';

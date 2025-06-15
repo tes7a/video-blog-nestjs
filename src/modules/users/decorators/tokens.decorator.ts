@@ -1,10 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const CurrentUserId = createParamDecorator(
-  (
-    data: unknown,
-    context: ExecutionContext,
-  ): Tokens => {
+export const Tokens = createParamDecorator(
+  (data: unknown, context: ExecutionContext): Tokens => {
     const request = context.switchToHttp().getRequest();
 
     if (!request.user.accessToken || !request.user.refreshToken)

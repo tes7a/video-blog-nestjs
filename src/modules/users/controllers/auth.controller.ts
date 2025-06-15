@@ -11,8 +11,13 @@ import {
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
-import { JwtAuthGuard, JwtRefreshGuard, LocalAuthGuard } from '../guards';
-import { CurrentUser, CurrentUserId } from '../decorators';
+import {
+  JwtAuthGuard,
+  JwtRefreshGuard,
+  LocalAuthGuard,
+  LoginDeviceGuard,
+} from '../guards';
+import { CurrentUser, Tokens } from '../decorators';
 import { AuthService } from '../services';
 import {
   CodeValidation,
@@ -30,9 +35,9 @@ export class AuthController {
     private userConfig: UsersConfig,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard, LoginDeviceGuard)
   @Post('/login')
-  async login(@CurrentUserId() tokens: Tokens, @Res() response: Response) {
+  async login(@Tokens() tokens: Tokens, @Res() response: Response) {
     const { accessToken, refreshToken } = tokens;
 
     response.cookie('refreshToken', refreshToken, {
@@ -106,11 +111,11 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-token')
   async refreshToken(
-    @CurrentUserId() tokens: Tokens,
+    @Tokens() tokens: Tokens,
     @Res() response: Response,
   ) {
     const { accessToken, refreshToken } = tokens;
-    
+
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
