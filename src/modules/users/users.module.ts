@@ -18,7 +18,14 @@ import {
   LocalStrategy,
 } from './strategies';
 import { UsersConfig } from './config/users.config';
-import { Device, DeviceSchema, User, UserSchema } from './schemas';
+import {
+  Device,
+  DeviceSchema,
+  InvalidToken,
+  InvalidTokenSchema,
+  User,
+  UserSchema,
+} from './schemas';
 import {
   AuthController,
   SecurityController,
@@ -27,6 +34,7 @@ import {
 import { AuthService, UsersService } from './services';
 import {
   DeviceRepository,
+  SecurityRepository,
   UsersQueryRepository,
   UsersRepository,
 } from './infrastructure';
@@ -43,6 +51,7 @@ import {
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Device.name, schema: DeviceSchema },
+      { name: InvalidToken.name, schema: InvalidTokenSchema },
     ]),
     JwtModule,
   ],
@@ -62,6 +71,7 @@ import {
     OptionalJwtAuthGuard,
     LoginDeviceGuard,
     DeviceRepository,
+    SecurityRepository,
     EmailManager,
     JwtRefreshGuard,
     JwtRefreshStrategy,

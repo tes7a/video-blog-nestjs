@@ -28,7 +28,7 @@ import {
 } from '../validation';
 import { UserType } from '../models';
 import { UsersConfig } from '../config/users.config';
-import { DeviceRepository } from '../infrastructure';
+import { DeviceRepository, SecurityRepository } from '../infrastructure';
 
 @Controller('/auth')
 export class AuthController {
@@ -36,6 +36,7 @@ export class AuthController {
     private authService: AuthService,
     private userConfig: UsersConfig,
     private deviceRepository: DeviceRepository,
+    private securityRepository: SecurityRepository,
   ) {}
 
   @UseGuards(LocalAuthGuard, LoginDeviceGuard)
@@ -63,8 +64,13 @@ export class AuthController {
   ) {
     const { refreshToken } = req.cookies;
 
-    if (!refreshToken) return response.sendStatus(HttpStatus.UNAUTHORIZED);
+    const isTokenBlacklisted =
+      await this.securityRepository.isTokenBlacklisted(refreshToken);
 
+    if (!refreshToken || isTokenBlacklisted)
+      return response.sendStatus(HttpStatus.UNAUTHORIZED);
+
+    await this.securityRepository.addInvalidToken(refreshToken);
     await this.deviceRepository.deleteCurrentDevice(data.userId, data.deviceId);
     response.clearCookie('refreshToken', {
       httpOnly: true,
