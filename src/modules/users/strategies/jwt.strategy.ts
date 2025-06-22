@@ -35,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const device = await this.deviceRepository.getDevice(deviceId);
 
     if (!device) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Invalid device credentials');
     }
 
     if (!user) {

@@ -68,7 +68,7 @@ export class UsersRepository {
     if (!user) return undefined;
 
     return {
-      ...omit(user, '_id', '__v'),
+      ...omit(user, '_id', '__v', 'accountData._id', 'emailConfirmation._id'),
     };
   }
 
@@ -78,7 +78,7 @@ export class UsersRepository {
       .lean<UserType>()
       .exec();
 
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new UnauthorizedException('Invalid User credentials');
 
     return {
       ...omit(user, '_id', '__v'),

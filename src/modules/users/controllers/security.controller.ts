@@ -50,6 +50,7 @@ export class SecurityController {
     @Param('deviceId') deviceId: string,
     @Res() response: Response,
   ) {
+    if (!deviceId) return response.sendStatus(HttpStatus.NOT_FOUND);
     await this.deviceRepository.deleteCurrentDevice(accountData.id, deviceId);
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
