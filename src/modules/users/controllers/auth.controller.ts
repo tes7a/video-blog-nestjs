@@ -145,7 +145,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-token')
   async refreshToken(
-    @Tokens() tokens: Tokens,
+    @Tokens() data: Tokens & { userId: string; deviceId: string },
     @Req() req: Request,
     @Res() response: Response,
   ) {
@@ -156,7 +156,14 @@ export class AuthController {
     if (!oldRefreshToken || isTokenBlacklisted)
       return response.sendStatus(HttpStatus.UNAUTHORIZED);
 
-    const { accessToken, refreshToken } = tokens;
+    await this.securityRepository.addInvalidToken(oldRefreshToken);
+
+    await this.deviceRepository.updateDeviceActivity(
+      data.deviceId,
+      new Date().toISOString(),
+    );
+
+    const { accessToken, refreshToken } = data;
 
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,

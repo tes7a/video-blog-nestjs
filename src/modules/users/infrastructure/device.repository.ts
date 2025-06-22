@@ -59,6 +59,16 @@ export class DeviceRepository {
     }
   }
 
+  async updateDeviceActivity(
+    deviceId: string,
+    lastActiveDate: string,
+  ): Promise<void> {
+    await this.deviceModel.updateOne(
+      { deviceId },
+      { $set: { lastActiveDate } },
+    );
+  }
+
   async deleteCurrentDevice(userId: string, deviceId: string): Promise<void> {
     try {
       const device = await this.deviceModel.findOne({ deviceId });
