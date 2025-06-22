@@ -4,12 +4,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { UsersConfig } from '../config/users.config';
 import { UserType } from '../models';
-import { UsersRepository } from '../infrastructure';
+import { DeviceRepository, UsersRepository } from '../infrastructure';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private usersRepository: UsersRepository,
+    private deviceRepository: DeviceRepository,
     userConfig: UsersConfig,
   ) {
     super({
@@ -31,6 +32,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     } = payload;
 
     const user = await this.usersRepository.findUserById(userId);
+    const device = await this.deviceRepository.getDevice(deviceId);
+
+    if (!device) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     if (!user) {
       throw new UnauthorizedException(

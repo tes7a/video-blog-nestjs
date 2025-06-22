@@ -22,6 +22,15 @@ export class DeviceRepository {
     await this.deviceModel.create(deviceInfo);
   }
 
+  async getDevice(deviceId: string): Promise<DeviceType> {
+    const device = await this.deviceModel
+      .findOne({ deviceId })
+      .lean<DeviceType>()
+      .exec();
+
+    return device;
+  }
+
   async getAllDevices(userId: string): Promise<DeviceType[]> {
     const devices = await this.deviceModel
       .find({

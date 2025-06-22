@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   BadRequestException,
   Body,
@@ -6,6 +6,7 @@ import {
   Get,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -27,12 +28,14 @@ import {
 } from '../validation';
 import { UserType } from '../models';
 import { UsersConfig } from '../config/users.config';
+import { DeviceRepository } from '../infrastructure';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private userConfig: UsersConfig,
+    private deviceRepository: DeviceRepository,
   ) {}
 
   @UseGuards(LocalAuthGuard, LoginDeviceGuard)
@@ -51,6 +54,31 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('/logout')
+  async logout(
+    @Req() req: Request,
+    @CurrentUser()
+    accountData: Pick<UserType, 'id'> &
+      Pick<UserType['accountData'], 'email' | 'login'> & { deviceId: string },
+    @Res() response: Response,
+  ) {
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken) return response.sendStatus(HttpStatus.UNAUTHORIZED);
+
+    await this.deviceRepository.deleteCurrentDevice(
+      accountData.id,
+      accountData.deviceId,
+    );
+    response.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+    });
+    return response.sendStatus(HttpStatus.NO_CONTENT);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('/me')
   getProfile(
     @CurrentUser()
@@ -58,7 +86,11 @@ export class AuthController {
       Pick<UserType['accountData'], 'email' | 'login'>,
     @Res() response: Response,
   ) {
-    return response.status(HttpStatus.OK).send(accountData);
+    return response.status(HttpStatus.OK).send({
+      email: accountData.email,
+      login: accountData.login,
+      userId: accountData.id,
+    });
   }
 
   @Throttle({ default: { limit: 5, ttl: 5000 } })
@@ -110,10 +142,7 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-token')
-  async refreshToken(
-    @Tokens() tokens: Tokens,
-    @Res() response: Response,
-  ) {
+  async refreshToken(@Tokens() tokens: Tokens, @Res() response: Response) {
     const { accessToken, refreshToken } = tokens;
 
     response.cookie('refreshToken', refreshToken, {
