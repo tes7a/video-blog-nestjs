@@ -53,23 +53,18 @@ export class AuthController {
     return response.status(HttpStatus.OK).send({ accessToken });
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtRefreshGuard)
   @Post('/logout')
   async logout(
     @Req() req: Request,
-    @CurrentUser()
-    accountData: Pick<UserType, 'id'> &
-      Pick<UserType['accountData'], 'email' | 'login'> & { deviceId: string },
+    @Tokens() data: Tokens & { userId: string; deviceId: string },
     @Res() response: Response,
   ) {
     const { refreshToken } = req.cookies;
 
     if (!refreshToken) return response.sendStatus(HttpStatus.UNAUTHORIZED);
 
-    await this.deviceRepository.deleteCurrentDevice(
-      accountData.id,
-      accountData.deviceId,
-    );
+    await this.deviceRepository.deleteCurrentDevice(data.userId, data.deviceId);
     response.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,

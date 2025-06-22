@@ -33,9 +33,10 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: JwtPayload<UserType>) {
+  async validate(payload: JwtPayload<UserType & { deviceId: string }>) {
     const {
       user: { id: userId },
+      deviceId,
     } = payload;
 
     const user = await this.usersRepository.findUserById(userId);
@@ -46,13 +47,13 @@ export class JwtRefreshStrategy extends PassportStrategy(
       );
     }
 
-    const accessToken = await this.accessTokenContext.sign(
-      { user },
+    const accessToken = await this.accessTokenContext.sign({ user, deviceId });
+
+    const refreshToken = await this.refreshTokenContext.sign(
+      { user, deviceId },
       { expiresIn: this.userConfig.refreshedAccessTokenTime },
     );
 
-    const refreshToken = await this.refreshTokenContext.sign({ user });
-
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, deviceId, userId: user.id };
   }
 }
