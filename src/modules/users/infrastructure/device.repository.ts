@@ -39,7 +39,7 @@ export class DeviceRepository {
       .lean<DeviceType[]>()
       .exec();
 
-    return devices.map((device) => omit(device, ['_id', '__v']));
+    return devices.map((device) => omit(device, ['_id', '__v', 'userId']));
   }
 
   async deleteAllDevices(userId: string, deviceId: string): Promise<void> {

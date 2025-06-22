@@ -8,6 +8,9 @@ export class Device {
   id: string;
 
   @Prop({ type: String })
+  ip: string;
+
+  @Prop({ type: String })
   title: string; // user-agent
 
   @Prop({ type: String })

@@ -39,6 +39,7 @@ export class AuthController {
   ) {}
 
   @UseGuards(LocalAuthGuard, LoginDeviceGuard)
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
   @Post('/login')
   async login(@Tokens() tokens: Tokens, @Res() response: Response) {
     const { accessToken, refreshToken } = tokens;
@@ -88,7 +89,7 @@ export class AuthController {
     });
   }
 
-  @Throttle({ default: { limit: 5, ttl: 5000 } })
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
   @Post('/password-recovery')
   async passwordRecover(
     @Body() body: EmailValidation,
@@ -99,7 +100,7 @@ export class AuthController {
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
-  @Throttle({ default: { limit: 5, ttl: 5000 } })
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
   @Post('/new-password')
   async newPassword(
     @Body() body: PasswordValidation,
@@ -114,7 +115,7 @@ export class AuthController {
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
-  @Throttle({ default: { limit: 5, ttl: 5000 } })
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
   @Post('/registration')
   async registerUser(
     @Body() body: RegistrationValidation,
@@ -124,7 +125,7 @@ export class AuthController {
     return response.sendStatus(HttpStatus.NO_CONTENT);
   }
 
-  @Throttle({ default: { limit: 5, ttl: 5000 } })
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
   @Post('/registration-confirmation')
   async registrationConfirmation(
     @Body() body: CodeValidation,
@@ -150,7 +151,7 @@ export class AuthController {
     return response.status(HttpStatus.OK).send({ accessToken });
   }
 
-  @Throttle({ default: { limit: 5, ttl: 5000 } })
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
   @Post('/registration-email-resending')
   async registrationResending(
     @Body() body: EmailValidation,
