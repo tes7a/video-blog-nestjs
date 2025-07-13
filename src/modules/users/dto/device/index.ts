@@ -1,1 +1,1 @@
-export * from './Device.dto';
+export * from './device.dto';
