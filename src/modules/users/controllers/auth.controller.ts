@@ -10,6 +10,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 
 import {
@@ -23,13 +30,16 @@ import { AuthService } from '../services';
 import {
   CodeValidation,
   EmailValidation,
+  LoginValidation,
   PasswordValidation,
   RegistrationValidation,
 } from '../validation';
 import { UserType } from '../models';
 import { UsersConfig } from '../config/users.config';
 import { DeviceRepository, SecurityRepository } from '../infrastructure';
+import { AccessTokenDto, ProfileDto } from '../dto';
 
+@ApiTags('Auth')
 @Controller('/auth')
 export class AuthController {
   constructor(
@@ -41,6 +51,14 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard, LoginDeviceGuard)
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @ApiOperation({ summary: 'User login' })
+  @ApiBody({ type: LoginValidation })
+  @ApiResponse({
+    status: 200,
+    description: 'Login success',
+    type: AccessTokenDto,
+  })
   @Post('/login')
   async login(@Tokens() tokens: Tokens, @Res() response: Response) {
     const { accessToken, refreshToken } = tokens;
@@ -56,6 +74,10 @@ export class AuthController {
   }
 
   @UseGuards(JwtRefreshGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'User logout' })
+  @ApiResponse({ status: 204, description: 'Logout success' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('/logout')
   async logout(
     @Req() req: Request,
@@ -81,6 +103,10 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiResponse({ status: 200, description: 'Profile data', type: ProfileDto })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get('/me')
   getProfile(
     @CurrentUser()
@@ -96,6 +122,9 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @ApiOperation({ summary: 'Send password recovery email' })
+  @ApiBody({ type: EmailValidation })
+  @ApiResponse({ status: 204, description: 'Email sent' })
   @Post('/password-recovery')
   async passwordRecover(
     @Body() body: EmailValidation,
@@ -107,6 +136,9 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @ApiOperation({ summary: 'Set new password' })
+  @ApiBody({ type: PasswordValidation })
+  @ApiResponse({ status: 204, description: 'Password set' })
   @Post('/new-password')
   async newPassword(
     @Body() body: PasswordValidation,
@@ -122,6 +154,9 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @ApiOperation({ summary: 'Register user' })
+  @ApiBody({ type: RegistrationValidation })
+  @ApiResponse({ status: 204, description: 'Registration success' })
   @Post('/registration')
   async registerUser(
     @Body() body: RegistrationValidation,
@@ -132,6 +167,9 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @ApiOperation({ summary: 'Confirm registration' })
+  @ApiBody({ type: CodeValidation })
+  @ApiResponse({ status: 204, description: 'Confirmation success' })
   @Post('/registration-confirmation')
   async registrationConfirmation(
     @Body() body: CodeValidation,
@@ -143,6 +181,14 @@ export class AuthController {
   }
 
   @UseGuards(JwtRefreshGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Refresh auth tokens' })
+  @ApiResponse({
+    status: 200,
+    description: 'Tokens refreshed',
+    type: AccessTokenDto,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('/refresh-token')
   async refreshToken(
     @Tokens() data: Tokens & { userId: string; deviceId: string },
@@ -176,6 +222,9 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @ApiOperation({ summary: 'Resend confirmation email' })
+  @ApiBody({ type: EmailValidation })
+  @ApiResponse({ status: 204, description: 'Email resent' })
   @Post('/registration-email-resending')
   async registrationResending(
     @Body() body: EmailValidation,

@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import {
   Controller,
   Delete,
@@ -7,17 +8,26 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { DeviceRepository } from '../infrastructure';
 import { JwtRefreshGuard } from '../guards';
 import { Tokens } from '../decorators';
-import { Response } from 'express';
+import { DeviceViewDto } from '../dto';
 
 @UseGuards(JwtRefreshGuard)
+@ApiTags('Security')
 @Controller('/security')
 export class SecurityController {
   constructor(private deviceRepository: DeviceRepository) {}
 
   @Get('/devices')
+  @ApiOperation({ summary: 'Get all devices' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of devices',
+    type: [DeviceViewDto],
+  })
   async getAllDevices(
     @Tokens()
     data: Tokens & { userId: string; deviceId: string },
@@ -27,6 +37,8 @@ export class SecurityController {
   }
 
   @Delete('/devices')
+  @ApiOperation({ summary: 'Delete all devices except current' })
+  @ApiResponse({ status: 204, description: 'Devices deleted' })
   async deleteAllDevices(
     @Tokens() data: Tokens & { userId: string; deviceId: string },
     @Res() response: Response,
@@ -36,6 +48,9 @@ export class SecurityController {
   }
 
   @Delete('/devices/:deviceId')
+  @ApiOperation({ summary: 'Delete current device' })
+  @ApiParam({ name: 'deviceId', description: 'Device id' })
+  @ApiResponse({ status: 204, description: 'Device deleted' })
   async deleteCurrentDevice(
     @Tokens() data: Tokens & { userId: string; deviceId: string },
     @Param('deviceId') deviceId: string,

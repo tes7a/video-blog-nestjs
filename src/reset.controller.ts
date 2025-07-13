@@ -1,11 +1,13 @@
 import { Controller, Delete, HttpStatus, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Model } from 'mongoose';
 
 import { User } from './modules/users/schemas';
 import { Blog, Comment, Post } from './modules/blog/schemas';
 
+@ApiTags('Testing')
 @Controller('/testing')
 export class ResetController {
   constructor(
@@ -15,6 +17,8 @@ export class ResetController {
     @InjectModel(Comment.name) private commentModel: Model<Comment>,
   ) {}
 
+  @ApiOperation({ summary: 'Delete all data' })
+  @ApiResponse({ status: 204, description: 'All data deleted' })
   @Delete('/all-data')
   async resetAllData(@Res() response: Response) {
     await Promise.all([

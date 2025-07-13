@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
   IsEmail,
@@ -9,6 +10,7 @@ import {
 } from 'class-validator';
 
 export class UserValidation {
+  @ApiProperty()
   @MinLength(3)
   @MaxLength(10)
   @Matches('[a-zA-Z0-9_-]*$', undefined, {
@@ -20,11 +22,13 @@ export class UserValidation {
   @IsString()
   login: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
   @Transform(({ value }) => value?.trim())
   email: string;
 
+  @ApiProperty()
   @MinLength(6)
   @MaxLength(20)
   @IsNotEmpty()

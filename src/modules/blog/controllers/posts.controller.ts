@@ -12,6 +12,16 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBasicAuth,
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { PostsService } from '../services';
@@ -20,7 +30,14 @@ import {
   PostsQueryRepository,
   PostsRepository,
 } from '../infrastructure';
-import { GetCommentDTO, GetPostsDTO } from '../dto';
+import {
+  GetCommentDTO,
+  GetPostsDTO,
+  PostViewDto,
+  PostsPaginationDto,
+  CommentViewDto,
+  CommentsPaginationDto,
+} from '../dto';
 import {
   ContentValidation,
   LikeStatusValidation,
@@ -34,6 +51,7 @@ import {
 import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
 
+@ApiTags('Posts')
 @Controller('/posts')
 export class PostsController {
   constructor(
@@ -44,6 +62,11 @@ export class PostsController {
   ) {}
 
   @UseGuards(OptionalJwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get post by id' })
+  @ApiParam({ name: 'id', description: 'Post id' })
+  @ApiResponse({ status: 200, description: 'Post found', type: PostViewDto })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   @Get('/:id')
   async getPostById(
     @Req()
@@ -62,6 +85,19 @@ export class PostsController {
   }
 
   @UseGuards(OptionalJwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get comments for post' })
+  @ApiParam({ name: 'id', description: 'Post id' })
+  @ApiQuery({ name: 'pageNumber', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'sortBy', required: false })
+  @ApiQuery({ name: 'sortDirection', required: false })
+  @ApiResponse({
+    status: 200,
+    description: 'Comments list',
+    type: CommentsPaginationDto,
+  })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   @Get('/:id/comments')
   async getCommentsByPostId(
     @Param('id') id: string,
@@ -86,6 +122,18 @@ export class PostsController {
   }
 
   @UseGuards(OptionalJwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all posts' })
+  @ApiQuery({ name: 'pageNumber', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'sortBy', required: false })
+  @ApiQuery({ name: 'sortDirection', required: false })
+  @ApiResponse({
+    status: 200,
+    description: 'Posts list',
+    type: PostsPaginationDto,
+  })
+  @ApiResponse({ status: 404, description: 'Not found' })
   @Get()
   async getAllPosts(
     @Req()
@@ -104,6 +152,11 @@ export class PostsController {
   }
 
   @UseGuards(BasicAuthGuard)
+  @ApiBasicAuth()
+  @ApiOperation({ summary: 'Create post' })
+  @ApiBody({ type: PostValidation })
+  @ApiResponse({ status: 201, description: 'Post created', type: PostViewDto })
+  @ApiResponse({ status: 404, description: 'Blog not found' })
   @Post()
   async createPost(@Body() body: PostValidation, @Res() response: Response) {
     const data = await this.postsService.createPost(body);
@@ -112,6 +165,16 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create comment for post' })
+  @ApiParam({ name: 'id', description: 'Post id' })
+  @ApiBody({ type: ContentValidation })
+  @ApiResponse({
+    status: 201,
+    description: 'Comment created',
+    type: CommentViewDto,
+  })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   @Post('/:id/comments')
   async createComment(
     @Param('id') id: string,
@@ -136,6 +199,12 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update like status for post' })
+  @ApiParam({ name: 'id', description: 'Post id' })
+  @ApiBody({ type: LikeStatusValidation })
+  @ApiResponse({ status: 204, description: 'Status updated' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   @Put('/:id/like-status')
   async updateLikeStatus(
     @Param('id') id: string,
@@ -156,6 +225,12 @@ export class PostsController {
   }
 
   @UseGuards(BasicAuthGuard)
+  @ApiBasicAuth()
+  @ApiOperation({ summary: 'Update post' })
+  @ApiParam({ name: 'id', description: 'Post id' })
+  @ApiBody({ type: PostValidation })
+  @ApiResponse({ status: 204, description: 'Post updated' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   @Put('/:id')
   async updatePost(
     @Param('id') id: string,
@@ -168,6 +243,11 @@ export class PostsController {
   }
 
   @UseGuards(BasicAuthGuard)
+  @ApiBasicAuth()
+  @ApiOperation({ summary: 'Delete post' })
+  @ApiParam({ name: 'id', description: 'Post id' })
+  @ApiResponse({ status: 204, description: 'Post deleted' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   @Delete('/:id')
   async deletePost(@Param('id') id: string, @Res() response: Response) {
     const data = await this.postsRepository.deletePost(id);

@@ -10,19 +10,38 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { CommentsRepository } from '../infrastructure';
 import { JwtAuthGuard, OptionalJwtAuthGuard } from '../../users/guards';
 import { CurrentUser } from '../../users/decorators';
 import { UserType } from '../../users/models';
+import { CommentViewDto } from '../dto';
 import { ContentValidation, LikeStatusValidation } from '../validation';
 
+@ApiTags('Comments')
 @Controller('/comments')
 export class CommentsController {
   constructor(private commentsRepository: CommentsRepository) {}
 
   @UseGuards(OptionalJwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get comment by id' })
+  @ApiParam({ name: 'id', description: 'Comment id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Comment found',
+    type: CommentViewDto,
+  })
+  @ApiResponse({ status: 404, description: 'Not found' })
   @Get('/:id')
   async getCommentById(
     @Req()
@@ -41,6 +60,12 @@ export class CommentsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update comment content' })
+  @ApiParam({ name: 'id', description: 'Comment id' })
+  @ApiBody({ type: ContentValidation })
+  @ApiResponse({ status: 204, description: 'Comment updated' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   @Put('/:id')
   async updateComment(
     @Param('id') id: string,
@@ -59,6 +84,12 @@ export class CommentsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update like status for comment' })
+  @ApiParam({ name: 'id', description: 'Comment id' })
+  @ApiBody({ type: LikeStatusValidation })
+  @ApiResponse({ status: 204, description: 'Status updated' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   @Put('/:id/like-status')
   async updateLikeStatus(
     @Param('id') id: string,
@@ -77,6 +108,11 @@ export class CommentsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete comment' })
+  @ApiParam({ name: 'id', description: 'Comment id' })
+  @ApiResponse({ status: 204, description: 'Comment deleted' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   @Delete('/:id')
   async deleteComment(
     @Param('id') id: string,
