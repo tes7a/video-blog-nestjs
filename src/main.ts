@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { resolve } from 'path';
+import { writeFileSync } from 'fs';
 
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './filters/exception.filter';
@@ -22,7 +24,21 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api-docs', app, document);
+  SwaggerModule.setup('/api-docs', app, document);
+
+  if (process.env.NODE_ENV === 'development') {
+    const pathToSwaggerStaticFolder = resolve(process.cwd(), 'swagger-static');
+    const pathToSwaggerJson = resolve(
+      pathToSwaggerStaticFolder,
+      'swagger.json',
+    );
+
+    const swaggerJson = JSON.stringify(document, null, 2);
+    writeFileSync(pathToSwaggerJson, swaggerJson);
+    console.log(
+      `Swagger JSON file written to: '/swagger-static/api-docs.json'`,
+    );
+  }
 
   app.useGlobalPipes(
     new ValidationPipe({

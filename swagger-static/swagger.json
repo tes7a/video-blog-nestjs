@@ -1,0 +1,1788 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/testing/all-data": {
+      "delete": {
+        "operationId": "ResetController_resetAllData",
+        "summary": "Delete all data",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "All data deleted"
+          }
+        },
+        "tags": [
+          "Testing"
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "UsersController_getUsers",
+        "summary": "Get all users",
+        "parameters": [
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageNumber",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "searchEmailTerm",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "searchLoginTerm",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersPaginationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "post": {
+        "operationId": "UsersController_createUser",
+        "summary": "Create user by admin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "operationId": "UsersController_deleteUser",
+        "summary": "Delete user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "summary": "User login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "summary": "User logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Logout success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_getProfile",
+        "summary": "Get user profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Profile data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/password-recovery": {
+      "post": {
+        "operationId": "AuthController_passwordRecover",
+        "summary": "Send password recovery email",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Email sent"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/new-password": {
+      "post": {
+        "operationId": "AuthController_newPassword",
+        "summary": "Set new password",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Password set"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/registration": {
+      "post": {
+        "operationId": "AuthController_registerUser",
+        "summary": "Register user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Registration success"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/registration-confirmation": {
+      "post": {
+        "operationId": "AuthController_registrationConfirmation",
+        "summary": "Confirm registration",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Confirmation success"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "operationId": "AuthController_refreshToken",
+        "summary": "Refresh auth tokens",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Tokens refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/registration-email-resending": {
+      "post": {
+        "operationId": "AuthController_registrationResending",
+        "summary": "Resend confirmation email",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Email resent"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/security/devices": {
+      "get": {
+        "operationId": "SecurityController_getAllDevices",
+        "summary": "Get all devices",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of devices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceViewDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Security"
+        ]
+      },
+      "delete": {
+        "operationId": "SecurityController_deleteAllDevices",
+        "summary": "Delete all devices except current",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Devices deleted"
+          }
+        },
+        "tags": [
+          "Security"
+        ]
+      }
+    },
+    "/security/devices/{deviceId}": {
+      "delete": {
+        "operationId": "SecurityController_deleteCurrentDevice",
+        "summary": "Delete current device",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "required": true,
+            "in": "path",
+            "description": "Device id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Device deleted"
+          }
+        },
+        "tags": [
+          "Security"
+        ]
+      }
+    },
+    "/blogs/{id}": {
+      "get": {
+        "operationId": "BlogsController_getBlogById",
+        "summary": "Get blog by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Blog id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ]
+      },
+      "put": {
+        "operationId": "BlogsController_updateBlog",
+        "summary": "Update blog",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Blog id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlogValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Blog updated"
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "BlogsController_deleteBlog",
+        "summary": "Delete blog",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Blog id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Blog deleted"
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/blogs/{id}/posts": {
+      "get": {
+        "operationId": "BlogsController_getPostsByBlogId",
+        "summary": "Get posts for specific blog",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Blog id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageNumber",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostsPaginationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "BlogsController_createPostByBlogId",
+        "summary": "Create post for blog",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Blog id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostByIdValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/blogs": {
+      "get": {
+        "operationId": "BlogsController_getAllBlogs",
+        "summary": "Get all blogs",
+        "parameters": [
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageNumber",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "searchNameTerm",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blogs list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogsPaginationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ]
+      },
+      "post": {
+        "operationId": "BlogsController_crateBlog",
+        "summary": "Create blog",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlogValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Blog created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Blogs"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/comments/{id}": {
+      "get": {
+        "operationId": "CommentsController_getCommentById",
+        "summary": "Get comment by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Comment id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "CommentsController_updateComment",
+        "summary": "Update comment content",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Comment id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Comment updated"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        },
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "CommentsController_deleteComment",
+        "summary": "Delete comment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Comment id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comment deleted"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        },
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/comments/{id}/like-status": {
+      "put": {
+        "operationId": "CommentsController_updateLikeStatus",
+        "summary": "Update like status for comment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Comment id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LikeStatusValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Status updated"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        },
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/posts/{id}": {
+      "get": {
+        "operationId": "PostsController_getPostById",
+        "summary": "Get post by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Post id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "PostsController_updatePost",
+        "summary": "Update post",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Post id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Post updated"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "PostsController_deletePost",
+        "summary": "Delete post",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Post id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Post deleted"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/posts/{id}/comments": {
+      "get": {
+        "operationId": "PostsController_getCommentsByPostId",
+        "summary": "Get comments for post",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Post id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageNumber",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comments list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentsPaginationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "PostsController_createComment",
+        "summary": "Create comment for post",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Post id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/posts": {
+      "get": {
+        "operationId": "PostsController_getAllPosts",
+        "summary": "Get all posts",
+        "parameters": [
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "pageNumber",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostsPaginationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "PostsController_createPost",
+        "summary": "Create post",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostViewDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/posts/{id}/like-status": {
+      "put": {
+        "operationId": "PostsController_updateLikeStatus",
+        "summary": "Update like status for post",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Post id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LikeStatusValidation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Status updated"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        },
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Video Blog API",
+    "description": "API documentation",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "basic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "UserViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "login": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "login",
+          "email",
+          "createdAt"
+        ]
+      },
+      "UsersPaginationDto": {
+        "type": "object",
+        "properties": {
+          "pagesCount": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalCount": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserViewDto"
+            }
+          }
+        },
+        "required": [
+          "pagesCount",
+          "page",
+          "pageSize",
+          "totalCount",
+          "items"
+        ]
+      },
+      "UserValidation": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "login",
+          "email",
+          "password"
+        ]
+      },
+      "CreateUserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "login": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "login",
+          "email",
+          "createdAt"
+        ]
+      },
+      "LoginValidation": {
+        "type": "object",
+        "properties": {
+          "loginOrEmail": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "loginOrEmail",
+          "password"
+        ]
+      },
+      "AccessTokenDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken"
+        ]
+      },
+      "ProfileDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "login": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "login",
+          "userId"
+        ]
+      },
+      "EmailValidation": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "PasswordValidation": {
+        "type": "object",
+        "properties": {
+          "newPassword": {
+            "type": "string"
+          },
+          "recoveryCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "newPassword",
+          "recoveryCode"
+        ]
+      },
+      "RegistrationValidation": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "login",
+          "password",
+          "email"
+        ]
+      },
+      "CodeValidation": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "DeviceViewDto": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "lastActiveDate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "deviceId",
+          "ip",
+          "title",
+          "lastActiveDate"
+        ]
+      },
+      "BlogViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "isMembership": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "websiteUrl",
+          "createdAt",
+          "isMembership"
+        ]
+      },
+      "PostViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "blogId": {
+            "type": "string"
+          },
+          "blogName": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "shortDescription",
+          "content",
+          "blogId",
+          "blogName",
+          "createdAt"
+        ]
+      },
+      "PostsPaginationDto": {
+        "type": "object",
+        "properties": {
+          "pagesCount": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalCount": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostViewDto"
+            }
+          }
+        },
+        "required": [
+          "pagesCount",
+          "page",
+          "pageSize",
+          "totalCount",
+          "items"
+        ]
+      },
+      "BlogsPaginationDto": {
+        "type": "object",
+        "properties": {
+          "pagesCount": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalCount": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlogViewDto"
+            }
+          }
+        },
+        "required": [
+          "pagesCount",
+          "page",
+          "pageSize",
+          "totalCount",
+          "items"
+        ]
+      },
+      "BlogValidation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "websiteUrl"
+        ]
+      },
+      "PostByIdValidation": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "shortDescription",
+          "content"
+        ]
+      },
+      "CommentViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "commentatorInfo": {
+            "type": "object",
+            "example": {
+              "userId": "string",
+              "userLogin": "string"
+            }
+          },
+          "likesInfo": {
+            "type": "object",
+            "example": {
+              "likesCount": 0,
+              "dislikesCount": 0,
+              "myStatus": "None"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "content",
+          "createdAt",
+          "commentatorInfo",
+          "likesInfo"
+        ]
+      },
+      "ContentValidation": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "LikeStatusValidation": {
+        "type": "object",
+        "properties": {
+          "likeStatus": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "likeStatus"
+        ]
+      },
+      "CommentsPaginationDto": {
+        "type": "object",
+        "properties": {
+          "pagesCount": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalCount": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentViewDto"
+            }
+          }
+        },
+        "required": [
+          "pagesCount",
+          "page",
+          "pageSize",
+          "totalCount",
+          "items"
+        ]
+      },
+      "PostValidation": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "blogId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "shortDescription",
+          "content",
+          "blogId"
+        ]
+      }
+    }
+  }
+}
